@@ -1,6 +1,6 @@
 # MEng-Design-Project
 
-## Setup
+## Available Scripts
  
 ### `make setup` 
 
