@@ -1,5 +1,6 @@
 setup:
 	cd frontend && npm install
+	pip install -r requirements.txt
 
 run: run-frontend run-api
 
