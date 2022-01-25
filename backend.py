@@ -9,7 +9,7 @@ def default():
 @app.route('/test') # /test?arg=val
 def getScore():
     arg = request.args.get('arg')
-    return f'The argument is: {arg}'
+    return {'output': f'The argument is {arg}'}
 
 if __name__ == '__main__':
-    app.run(host='localhost')
+    app.run(host='localhost', port='5000')
