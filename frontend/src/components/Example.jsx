@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { signInWithGoogle } from './Firebase';
 
 export default class Example extends Component {
     constructor() {
@@ -22,6 +23,7 @@ export default class Example extends Component {
             <div className="Example">
                 <p>Testing backed connection</p>
                 <p>Backend output: {this.state.test}</p>
+                <button onClick={signInWithGoogle}>Sign In</button>
 
             </div>
         )
