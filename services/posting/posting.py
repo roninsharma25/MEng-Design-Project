@@ -14,3 +14,7 @@
 # add a follow-up to a question
 
 # update a follow-up
+
+@app.route('/')
+def default():
+    return 'test'
