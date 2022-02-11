@@ -3,3 +3,5 @@ Flask-Opentracing
 jaeger_client
 pymongo
 pymongo[srv]
+Werkzeug==0.16.0
+pylibmc
