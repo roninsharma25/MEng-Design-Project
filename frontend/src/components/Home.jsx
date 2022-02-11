@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { auth } from './Firebase';
+import Memcached from './Memcached'
 
 export default class Home extends Component {
 
@@ -9,6 +10,7 @@ export default class Home extends Component {
             <div className="Home">
                 <h1>Home Page</h1>
                 <button onClick = {() => auth.signOut()}>Sign Out</button>
+                <Memcached />
             </div>
         )
     }
