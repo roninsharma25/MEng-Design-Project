@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Login from './components/Login';
 import firebase from './components/Firebase';
 import { useState, useEffect } from 'react';
+import './styles/reduction.scss';
 
 
 function App() {
