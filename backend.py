@@ -8,12 +8,13 @@ from services.posts import posts
 from services.users import users
 from services.classes import classes
 from services.schools import schools
+from services.caches import queueingCache
 
 app = Flask(__name__, static_url_path = '') # for deployment: , static_folder = 'frontend/build')
-# config = {
-#     "CACHE_TYPE": "MemcachedCache",
-# }
-# app.config.from_mapping(config)
+
+# Setup Cache
+
+queueingCache.init_app(app, {"CACHE_TYPE": "memcached"})
 # cache = Cache(app)
 
 app.register_blueprint(queues)
