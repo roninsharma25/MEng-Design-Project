@@ -29,7 +29,7 @@ const Page = ({
         ) : (
             title
           )}
-        {breadcrumbs && (
+        {/* {breadcrumbs && (
           <Breadcrumb className={bem.e('breadcrumb')}>
             <BreadcrumbItem>Home</BreadcrumbItem>
             {breadcrumbs.length &&
@@ -39,7 +39,7 @@ const Page = ({
                 </BreadcrumbItem>
               ))}
           </Breadcrumb>
-        )}
+        )} */}
       </div>
       {children}
     </Tag>

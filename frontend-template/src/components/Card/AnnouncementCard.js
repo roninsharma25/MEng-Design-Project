@@ -15,6 +15,7 @@ const AnnouncementCard = ({
   name,
   date,
   text,
+  extraText,
   className,
   buttonProps,
   ...restProps
@@ -36,6 +37,7 @@ const AnnouncementCard = ({
           <small className="text-muted">{date}</small>
         </CardText>
         <CardText className="text-center">{text}</CardText>
+        <CardText className="text-center">{extraText}</CardText>
 
         <Button color="primary" {...buttonProps} />
       </CardBody>
