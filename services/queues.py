@@ -101,7 +101,7 @@ def addQueueEntry():
     return "done"
 
 @queues.route('/getQueue', methods=['GET'])
-@queueingCache.cached()
+@queueingCache.cached(timeout = 1)
 def getQueue():
     queueID = request.args.get('queueID')
 
@@ -116,16 +116,20 @@ def getQueue():
 
     return entries_str
 
-@queues.route('/getAllQueueEntries', methods=['GET'])
-@queueingCache.cached()
-def getAllQueueEntries():
-    id = request.args.get('id')
-    queue = queueingCache.get(f'queue-{id}')
-    
-    entries = str(queue.getQueue())
+@queues.route('/updateQueueDatabase', methods=['POST'])
+@queueingCache.cached(timeout = 1)
+def updateQueueDatabase():
+    queueID = request.args.get('queueID')
 
-    return entries
+    queue = queueingCache.get(f'queue-{queueID}')
+    queue.updateDatabase('Cornell')
 
+@queues.route('/getQueueDatabase', methods=['GET'])
+@queueingCache.cached(timeout = 1)
+def getQueueDatabase():
+    queueID = request.args.get('queueID')
 
+    queue = queueingCache.get(f'queue-{queueID}')
+    queueEntries = queue.getDatabaseQueue('Cornell')
 
-
+    return str(queueEntries)
