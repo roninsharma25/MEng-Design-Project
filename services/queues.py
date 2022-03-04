@@ -6,7 +6,7 @@
 from urllib import request
 from flask import *
 from services.caches import queueingCache
-from services.databases import Queue, QueueEntry, User
+from services.storage import Queue, QueueEntry, User
 import services.databases as db
 
 queues = Blueprint('queues', __name__, url_prefix='/queues')
@@ -71,29 +71,51 @@ def testGet():
     return str(queueingCache.get('queue').id)
 
 @queues.route('/cacheTestPost', methods=['GET', 'POST'])
-@queueingCache.cached(timeout=1)
+@queueingCache.cached(timeout = 1)
 def testPost():
     input = request.args.get('test')
     return input
 
 @queues.route('/createQueue', methods=['GET', 'POST'])
-@queueingCache.cached()
+@queueingCache.cached(timeout = 1)
 def createQueue():
-    id = request.args.get('id')
-    queueingCache.set(f'queue-{id}', Queue(id))
+    queueID = request.args.get('queueID')
+    queueingCache.set(f'queue-{queueID}', Queue(queueID))
+
+    print("CREATING QUEUE")
+    print(queueingCache.get(f'queue-{queueID}'))
+
     return 'done'
 
 @queues.route('/addQueueEntry', methods=['GET', 'POST'])
-@queueingCache.cached()
+@queueingCache.cached(timeout = 1)
 def addQueueEntry():
-    id = request.args.get('id')
-    queue = queueingCache.get(f'queue-{id}')
-    
-    x = QueueEntry() # update with actual info
-    queue.addEntry(x)
-    queueingCache.set(f'queue-{id}', queue)
+    queueID = request.args.get('queueID')
+
+    queue = queueingCache.get(f'queue-{queueID}')
+    print("QUEUE VALUE")
+    print(queue)
+    queue.addEntry(User("Bill", 0), "Test?", 0) # update with actual info
+    queueingCache.set(f'queue-{queueID}', queue)
+
     return "done"
+
+@queues.route('/getQueue', methods=['GET'])
+@queueingCache.cached()
+def getQueue():
+    queueID = request.args.get('queueID')
+
+    queue = queueingCache.get(f'queue-{queueID}')
+    queueEntries = queue.getQueue()
+
+    entries_str = ""
+    for entry in queueEntries:
+        entries_str += entry.question + " "
     
+    entries_str += str(queue.numEntries)
+
+    return entries_str
+
 @queues.route('/getAllQueueEntries', methods=['GET'])
 @queueingCache.cached()
 def getAllQueueEntries():
@@ -103,5 +125,7 @@ def getAllQueueEntries():
     entries = str(queue.getQueue())
 
     return entries
-    
-    
+
+
+
+
