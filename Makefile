@@ -2,7 +2,7 @@ export FLASK_APP=backend.py
 export PYTHONDONTWRITEBYTECODE=1
 
 setup:
-	cd frontend && npm install
+	cd frontend-template && npm install
 	pip install -r requirements.txt
 
 run: run-frontend run-api run-database run-memcached
@@ -11,7 +11,7 @@ run-api:
 	flask run
 
 run-frontend:
-	cd frontend && npm run start
+	cd frontend-template && npm run start
 
 run-database:
 	mongod --dbpath ./database --port 4000
