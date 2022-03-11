@@ -4,6 +4,8 @@
 # Version: 4 March 2022
 
 import services.databases as db
+import numpy as np
+import time
 
 # MODELS ***********************************************************************
 
@@ -50,6 +52,9 @@ class Queue:
         self.classID = classID
         self.queue = []
         self.numEntries = 0
+        self.responseTimes = []
+        self.avgRespTime = 0
+        self.numPeopleHelped = 0
     
     """
     Adds a new entry to the queue.
@@ -61,8 +66,18 @@ class Queue:
     
     """
     Removes an entry from the queue.
+
+    success: boolean representing if staff removed the student from the queue
+                (false if the student left the queue)
     """
-    def removeEntry(self, entry):
+    def removeEntry(self, entry, staff = True):
+        if staff:
+            self.numPeopleHelped += 1
+
+            respTime = entry.getTime()
+            self.responseTimes.append(respTime)
+            self.avgRespTime = np.average(self.responseTimes)
+        
         removedPlace = entry.place
         self.queue.remove(entry)
 
@@ -87,7 +102,9 @@ class Queue:
     Add the current state of the queue to the database.
     """
     def updateDatabase(self, school = 'Cornell', key = 'Current State of the Queue'):
-        db.post('Queues', school, {key: self.queue})
+        db.post('Queues', school, {key: {'Queue': self.queue, 
+                                         'Avg Resp Time': self.avgRespTime, 
+                                         'Num People Helped': self.numPeopleHelped}})
 
     """
     Get the current state of the queue from the database.
@@ -108,6 +125,7 @@ class QueueEntry:
         self.question = question
         self.place = place
         self.classID = classID
+        self.startTime = time.time()
 
     """
     Returns the user for this queue entry.
@@ -120,6 +138,12 @@ class QueueEntry:
     """
     def getPlace(self):
         return self.place
+    
+    """
+    Returns the time (in minutes) spent in the queue.
+    """
+    def getTime(self):
+        return int((time.time() - self.startTime) / 60)
     
     """
     Update's the user's place in the queue.

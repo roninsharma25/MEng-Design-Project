@@ -130,6 +130,10 @@ def getQueueDatabase():
     queueID = request.args.get('queueID')
 
     queue = queueingCache.get(f'queue-{queueID}')
-    queueEntries = queue.getDatabaseQueue('Cornell')
+    databaseQueue = queue.getDatabaseQueue('Cornell')
 
-    return str(queueEntries)
+    queueEntries = databaseQueue['Queue']
+    avgRespTime = databaseQueue['Avg Resp Time']
+    numPeopleHelped = databaseQueue['Num People Helped']
+
+    return f'{queueEntries}, {avgRespTime}, {numPeopleHelped}'

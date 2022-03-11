@@ -6,3 +6,5 @@ pymongo
 pymongo[srv]
 Werkzeug==0.16.0
 python-memcached
+time
+numpy
