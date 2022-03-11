@@ -32,6 +32,20 @@ def getAll(database, school):
     return result
 
 
+def getSome(database, school, json):
+    """
+    Returns a list of objects in the corresponding collection denoted by the 
+    database and school using the filter criteria in the provided json.
+    """
+    collection = getCollection(database, school)
+    cursor = collection.find(json)
+    result = []
+    for element in cursor:
+        element["_id"] = str(element["_id"])
+        result.append(element)
+    return result
+
+
 def getOne(database, school, objectId):
     """
     Returns a single object with the given objectId in the corresponding 

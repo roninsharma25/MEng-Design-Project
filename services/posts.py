@@ -15,6 +15,12 @@ def getAll():
     return {"result": result}
 
 
+@posts.route('/some', methods=['GET'])
+def getSome():
+    result = db.getSome('Posts', 'CornellUniversity', request.json)
+    return {"result": result}
+
+
 @posts.route('/', methods=['GET'])
 def getOne():
     result = db.getOne('Posts', 'CornellUniversity', request.args.get('id'))

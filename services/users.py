@@ -15,6 +15,12 @@ def getAll():
     return {"result": result}
 
 
+@users.route('/some', methods=['GET'])
+def getSome():
+    result = db.getSome('Users', 'CornellUniversity', request.json)
+    return {"result": result}
+
+
 @users.route('/', methods=['GET'])
 def getOne():
     result = db.getOne('Users', 'CornellUniversity', request.args.get('id'))

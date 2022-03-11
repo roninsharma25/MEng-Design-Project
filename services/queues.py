@@ -17,6 +17,12 @@ def getAll():
     return {"result": result}
 
 
+@queues.route('/some', methods=['GET'])
+def getSome():
+    result = db.getSome('Queues', 'CornellUniversity', request.json)
+    return {"result": result}
+
+
 @queues.route('/', methods=['GET'])
 def getOne():
     result = db.getOne('Queues', 'CornellUniversity', request.args.get('id'))
