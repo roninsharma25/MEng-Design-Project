@@ -9,6 +9,11 @@ import {
     useNavigate
 } from "react-router-dom"
 
+// Authentication imports
+import { 
+    signInWithGoogle
+} from "./Firebase"
+
 
 export default function Login({ 
     authenticate,
@@ -37,7 +42,7 @@ export default function Login({
             <Button variant="contained" onClick={login}>Login</Button>
             <br/>
             <br/>
-            <Button variant="contained" onClick={login}>Login with Google</Button>
+            <Button variant="contained" onClick={signInWithGoogle}>Login with Google</Button>
             <br/>
             <br/>
             <Button variant="text" onClick={goToSignup}>

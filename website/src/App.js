@@ -1,12 +1,19 @@
 import "./App.css"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 
 import Main from "./components/Main"
 import Unauthorized from "./components/Unauthorized"
+import firebase from './components/Firebase';
 
 function App() {
   // TODO: some login stuff here
   const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) setAuthenticated(true)
+    })
+  }, [])
 
   const gradient = {
     backgroundImage: "linear-gradient(to right, #623bff, #4dacff)",
@@ -24,6 +31,7 @@ function App() {
   return authenticated 
     ? <Main authenticate={setAuthenticated} gradient={gradient}/> 
     : <Unauthorized authenticate={setAuthenticated} centerStyle={{...centerStyle, ...gradient}}/>
+
 }
 
 export default App
