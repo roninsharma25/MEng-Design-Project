@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { auth } from './Firebase';
 import Memcached from './Memcached';
 import { Button, ButtonGroup, ButtonToolbar, Card, CardBody, CardHeader, CardText, Col, DropdownItem, DropdownMenu, DropdownToggle, Row, UncontrolledButtonDropdown } from 'reactstrap';
-import PageTemplate from './PageTemplate';
 
 export default class Home extends Component {
 
@@ -14,7 +13,6 @@ export default class Home extends Component {
                 <button onClick = {() => auth.signOut()}>Sign Out</button>
                 <Memcached />
                 <Button color="primary">Left</Button>
-                <PageTemplate />
             </div>
         )
     }
