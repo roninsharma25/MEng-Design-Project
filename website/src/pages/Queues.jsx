@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { 
     TextField,
     CardContent,
@@ -7,8 +7,23 @@ import {
     Button,
     Card
 } from "@mui/material"
+import BACKEND from "./utils/constants.jsx"
 
 export default function Queues() {
+    const [queueEntries, setQueueEntries] = useState([]);
+
+    useEffect( () => {
+        fetch(BACKEND + "/queues/getQueue", {
+            'methods': 'GET',
+            headers : {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(resp => resp.json())
+        .then(resp => setQueueEntries(resp))
+        .catch(err => console.log(err))
+    }, [])
+
     const sidebar = {
         width: 800,
         height: 800,
@@ -39,7 +54,7 @@ export default function Queues() {
           </CardContent>
         </React.Fragment>
       );
-
+ 
     const ta = (
     <React.Fragment>
         <CardContent>
