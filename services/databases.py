@@ -6,7 +6,8 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-client = MongoClient('mongodb://localhost:4000/')
+connectionString = "mongodb+srv://sal:<>@letmeout-east.nbpq2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+client = MongoClient(connectionString)
 
 # FUNCTIONS ********************************************************************
 
