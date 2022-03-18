@@ -7,22 +7,33 @@ import {
     Button,
     Card
 } from "@mui/material"
-import BACKEND from "./utils/constants.jsx"
 
 export default function Queues() {
-    const [queueEntries, setQueueEntries] = useState([]);
+    const [queueEntries, setQueueEntries] = useState("No one is in the queue");
+    const [queueChanges, setQueueChanges] = useState(0);
+    const postRequest = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+    }
 
     useEffect( () => {
-        fetch(BACKEND + "/queues/getQueue", {
-            'methods': 'GET',
-            headers : {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(resp => resp.json())
-        .then(resp => setQueueEntries(resp))
-        .catch(err => console.log(err))
-    }, [])
+        fetch("/queues/getQueueDatabase?queueID=0")
+            .then(resp => resp.json())
+            .then(resp => setQueueEntries(resp.data.queue))
+            .catch(err => console.log(err))
+    }, [queueChanges])
+
+    function joinQueue() {
+        fetch("/queues/addQueueEntryDatabase?queueID=0", postRequest)
+            .then(() => setQueueChanges(queueChanges + 1))
+            .catch(err => console.log(err))   
+    }
+
+    function clearQueue() {
+        fetch("/queues/createQueueDatabase?queueID=0", postRequest)
+            .then(() => setQueueChanges(queueChanges + 1))
+            .catch(err => console.log(err))   
+    }
 
     const sidebar = {
         width: 800,
@@ -50,7 +61,11 @@ export default function Queues() {
             <h2>PROFESSOR'S OH (4PM - 6PM)</h2>
             <h3># Students ahead: 0</h3>
             <h3>Average wait time: 5 minutes</h3>
-            <Button variant="contained">Join Queue!</Button>
+            <Button variant="contained" onClick={joinQueue}>Join Queue!</Button>
+            <br></br>
+            <br></br>
+            <Button variant="contained" onClick={clearQueue}>Clear Queue!</Button>
+            <p>{queueEntries}</p>
           </CardContent>
         </React.Fragment>
       );
