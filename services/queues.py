@@ -82,7 +82,7 @@ def testPost():
     input = request.args.get('test')
     return input
 
-@queues.route('/createQueue', methods=['GET', 'POST'])
+@queues.route('/createQueue', methods=['POST'])
 @queueingCache.cached(timeout = 1)
 def createQueue():
     queueID = request.args.get('queueID')
@@ -91,9 +91,9 @@ def createQueue():
     print("CREATING QUEUE")
     print(queueingCache.get(f'queue-{queueID}'))
 
-    return 'done'
+    return "Success"
 
-@queues.route('/addQueueEntry', methods=['GET', 'POST'])
+@queues.route('/addQueueEntry', methods=['POST'])
 @queueingCache.cached(timeout = 1)
 def addQueueEntry():
     queueID = request.args.get('queueID')
@@ -104,7 +104,7 @@ def addQueueEntry():
     queue.addEntry(User("Bill", 0), "Test?", 0) # update with actual info
     queueingCache.set(f'queue-{queueID}', queue)
 
-    return "done"
+    return "Success"
 
 @queues.route('/getQueue', methods=['GET'])
 @queueingCache.cached(timeout = 1)
@@ -120,7 +120,7 @@ def getQueue():
     
     entries_str += str(queue.numEntries)
 
-    return entries_str
+    return {"data": entries_str}
 
 @queues.route('/updateQueueDatabase', methods=['POST'])
 @queueingCache.cached(timeout = 1)
@@ -130,9 +130,9 @@ def updateQueueDatabase():
     queue = queueingCache.get(f'queue-{queueID}')
     queue.updateDatabase('Cornell')
 
-@queues.route('/getQueueDatabase', methods=['GET'])
+@queues.route('/getQueueStats', methods=['GET'])
 @queueingCache.cached(timeout = 1)
-def getQueueDatabase():
+def getQueueStats():
     queueID = request.args.get('queueID')
 
     queue = queueingCache.get(f'queue-{queueID}')
@@ -143,3 +143,50 @@ def getQueueDatabase():
     numPeopleHelped = databaseQueue['Num People Helped']
 
     return f'{queueEntries}, {avgRespTime}, {numPeopleHelped}'
+
+
+### TEMPORARILY STORE EVERYTHING IN THE DATABASE
+
+@queues.route('/createQueueDatabase', methods=['POST'])
+@queueingCache.cached(timeout = 1)
+def createQueueDatabase():
+    queueID = request.args.get('queueID')
+    
+    # Empty the queue for this class
+    queues = db.getSome("Queues", "Cornell_University", {'id': queueID})
+    for queue in queues:
+        db.delete("Queues", "Cornell_University", queue["_id"])
+    
+    outcome = db.post("Queues", "Cornell_University", {'id': queueID, 'queue': []})
+
+    return str(outcome)
+
+@queues.route('/getQueueDatabase', methods=['GET'])
+def getQueueDatabase():
+    queueID = request.args.get('queueID')
+
+    result = db.getSome("Queues", "Cornell_University", {'id': queueID})
+
+    # queue = queueingCache.get(f'queue-{queueID}')
+    # queueEntries = queue.getQueue()
+
+    # entries_str = ""
+    # for entry in queueEntries:
+    #     entries_str += entry.question + " "
+    
+    # entries_str += str(queue.numEntries)
+
+    print(result)
+
+    return {"data": result[0]}
+
+@queues.route('/addQueueEntryDatabase', methods=['POST'])
+def addQueueEntryDatabase():
+    queueID = request.args.get('queueID')
+
+    result = db.getSome("Queues", "Cornell_University", {'id': queueID})[0]
+    result["queue"].append("Bill - 0 - Test?")
+
+    outcome = db.patch("Queues", "Cornell_University", result["_id"], {'id': queueID, 'queue': result["queue"]})
+
+    return str(outcome)
