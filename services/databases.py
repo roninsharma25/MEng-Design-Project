@@ -3,10 +3,11 @@
 # Authors: Ronin Sharma and Jude Javillo
 # Version: 14 February 2022
 
+import os
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-connectionString = "mongodb+srv://sal:sal2413tub@letmeout-east.nbpq2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+connectionString = f"mongodb+srv://sal:{os.getenv('DB_PW')}@letmeout-east.nbpq2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 client = MongoClient(connectionString)
 
 # FUNCTIONS ********************************************************************
