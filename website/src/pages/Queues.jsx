@@ -35,6 +35,12 @@ export default function Queues() {
             .catch(err => console.log(err))   
     }
 
+    function removeQueueEntry() {
+        fetch("/queues/removeQueueEntryDatabase?queueID=0?entryID=0", postRequest)
+            .then(() => setQueueChanges(queueChanges + 1))
+            .catch(err => console.log(err))  
+    }
+
     const sidebar = {
         width: 800,
         height: 800,
@@ -66,6 +72,9 @@ export default function Queues() {
             <br></br>
             <Button variant="contained" onClick={clearQueue}>Clear Queue!</Button>
             <p>{queueEntries}</p>
+            <br></br>
+            <br></br>
+            <Button variant="contained" onClick={removeQueueEntry}>Remove Queue Entry!</Button>
           </CardContent>
         </React.Fragment>
       );

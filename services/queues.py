@@ -190,3 +190,15 @@ def addQueueEntryDatabase():
     outcome = db.patch("Queues", "Cornell_University", result["_id"], {'id': queueID, 'queue': result["queue"]})
 
     return str(outcome)
+
+@queues.route('/removeQueueEntryDatabase', methods=['POST'])
+def removeQueueEntryDatabase():
+    queueID = request.args.get('queueID')
+    entryID = request.args.get('entryID')
+
+    result = db.getSome("Queues", "Cornell_University", {'id': queueID})[0]
+    entryDBID = filter(lambda x: x['_id'] == entryID, result['queue'])
+    
+    outcome = db.delete("Queues", "Cornell_University", entryDBID)
+
+    return str(outcome)
