@@ -11,25 +11,25 @@ posts = Blueprint('posts', __name__, url_prefix='/posts')
 
 @posts.route('/all', methods=['GET'])
 def getAll():
-    result = db.getAll('Posts', 'CornellUniversity')
+    result = db.getAll('Posts', 'Cornell_University')
     return {"result": result}
 
 
 @posts.route('/some', methods=['GET'])
 def getSome():
-    result = db.getSome('Posts', 'CornellUniversity', request.json)
+    result = db.getSome('Posts', 'Cornell_University', request.json)
     return {"result": result}
 
 
 @posts.route('/', methods=['GET'])
 def getOne():
-    result = db.getOne('Posts', 'CornellUniversity', request.args.get('id'))
+    result = db.getOne('Posts', 'Cornell_University', request.args.get('id'))
     return {"result": result}
 
 
 @posts.route('/', methods=['PATCH'])
 def patch():
-    success = db.patch('Posts', 'CornellUniversity', request.args.get('id'), request.json)
+    success = db.patch('Posts', 'Cornell_University', request.args.get('id'), request.json)
     result = {"success": success}
     result["message"] = "Post successfully updated" if success else "Post unsuccessfully updated"
     return result
@@ -37,7 +37,7 @@ def patch():
 
 @posts.route('/', methods=['POST'])
 def post():
-    success = db.post('Posts', 'CornellUniversity', request.json)
+    success = db.post('Posts', 'Cornell_University', request.json)
     result = {"success": success}
     result["message"] = "Post successfully added" if success else "Post unsuccessfully added"
     return result
@@ -45,7 +45,7 @@ def post():
 
 @posts.route('/', methods=['DELETE'])
 def delete():
-    success = db.delete('Posts', 'CornellUniversity', request.json["_id"])
+    success = db.delete('Posts', 'Cornell_University', request.json["_id"])
     result = {"success": success}
     result["message"] = "Post successfully removed" if success else "Post unsuccessfully removed"
     return result

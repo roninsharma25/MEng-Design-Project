@@ -1,5 +1,6 @@
 export FLASK_APP=backend.py
 export PYTHONDONTWRITEBYTECODE=1
+#export DB_PW=''
 
 setup:
 	cd website && npm install

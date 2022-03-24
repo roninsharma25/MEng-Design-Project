@@ -1,7 +1,8 @@
+import os
 import databases
 from pymongo import MongoClient
 
-connectionString = "mongodb+srv://sal:<>@letmeout-east.nbpq2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+connectionString = f"mongodb+srv://sal:{os.getenv('DB_PW')}@letmeout-east.nbpq2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 client = MongoClient(connectionString)
 
 db = client['Users']
@@ -16,7 +17,8 @@ for val in students:
 
 userData = [{'Name': 'Sal', 'Email': 'sal123@gmail.com', 'Type': 'Student'},
             {'Name': 'Bill', 'Email': 'bill123@gmail.com', 'Type': 'TA'},
-            {'Name': 'Billiam', 'Email': 'billiam123@gmail.com', 'Type': 'TA'}]
+            {'Name': 'Billiam', 'Email': 'billiam123@gmail.com', 'Type': 'TA'},
+            {'Name': 'Ronin', 'Email': 'rrs234@cornell.edu', 'Type': 'Professor'}]
 
 for user in userData:
     if (user['Email'] not in emails):

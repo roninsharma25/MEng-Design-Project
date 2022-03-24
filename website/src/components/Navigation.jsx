@@ -92,6 +92,7 @@ export default function Navigation({
       </div>
       <div style={rightSide}>
         <Stack spacing={2} direction="row" style={{position:"absolute", right:0}}>
+          <Button>test</Button>
           <Button variant="contained" onClick={goToPosts}>Posts</Button>
           <Button variant="contained" onClick={goToQueues}>Queues</Button>
           <Tooltip title="Account settings">
