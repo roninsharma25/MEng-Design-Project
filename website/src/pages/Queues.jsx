@@ -8,7 +8,9 @@ import {
     Card
 } from "@mui/material"
 
-export default function Queues() {
+export default function Queues({
+    user
+}) {
     const [queueEntries, setQueueEntries] = useState("No one is in the queue");
     const [queueChanges, setQueueChanges] = useState(0);
     const postRequest = {
@@ -92,6 +94,7 @@ export default function Queues() {
 
     return (
         <div style={{display: "flex"}}>
+            User email: {user.email}
             <Card variant="outlined" style={listStyle}>{prof}</Card>
             <Card variant="outlined" style={listStyle}>{ta}</Card>
         </div>

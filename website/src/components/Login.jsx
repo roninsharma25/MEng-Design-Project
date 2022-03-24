@@ -3,6 +3,7 @@ import {
     TextField,
     Button
 } from "@mui/material"
+import useEnhancedEffect from "@mui/material/utils/useEnhancedEffect";
 
 // Navigation imports
 import {
@@ -10,7 +11,7 @@ import {
 } from "react-router-dom"
 
 // Authentication imports
-import { 
+import {
     signInWithGoogle
 } from "./Firebase"
 

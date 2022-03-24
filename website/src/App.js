@@ -8,10 +8,14 @@ import firebase from './components/Firebase';
 function App() {
   // TODO: some login stuff here
   const [authenticated, setAuthenticated] = useState(false);
+  const [user, setUser] = useState('');
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(user => {
-      if (user) setAuthenticated(true)
+      if (user) {
+        setAuthenticated(true);
+        setUser(user);
+      }
     })
   }, [])
 
@@ -29,7 +33,7 @@ function App() {
 }
 
   return authenticated 
-    ? <Main authenticate={setAuthenticated} gradient={gradient}/> 
+    ? <Main authenticate={setAuthenticated} gradient={gradient} user={user}/> 
     : <Unauthorized authenticate={setAuthenticated} centerStyle={{...centerStyle, ...gradient}}/>
 
 }
