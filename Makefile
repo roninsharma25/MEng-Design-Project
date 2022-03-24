@@ -21,3 +21,6 @@ run-jaeger-tracing-container:
 
 run-memcached:
 	memcached
+
+run-locust:
+	cd testing && locust -f locustTest.py

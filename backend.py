@@ -27,6 +27,10 @@ app.register_blueprint(schools)
 def example():
     return {'message': 'Hello World'}
 
+@app.route('/testGet')
+def testGet():
+    return 'test'
+
 # @app.route('/test/memcached')
 # @cache.cached()
 # def getData():
