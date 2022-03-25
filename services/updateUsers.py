@@ -18,7 +18,8 @@ for val in students:
 userData = [{'Name': 'Sal', 'Email': 'sal123@gmail.com', 'Type': 'Student'},
             {'Name': 'Bill', 'Email': 'bill123@gmail.com', 'Type': 'TA'},
             {'Name': 'Billiam', 'Email': 'billiam123@gmail.com', 'Type': 'TA'},
-            {'Name': 'Ronin', 'Email': 'rrs234@cornell.edu', 'Type': 'Professor'}]
+            {'Name': 'Ronin', 'Email': 'rrs234@cornell.edu', 'Type': 'Professor'},
+            {'Name': 'Ronin S', 'Email': 'ronin.sharma5@gmail.com', 'Type': 'TA'}]
 
 for user in userData:
     if (user['Email'] not in emails):

@@ -13,7 +13,7 @@ export default function Queues({
 }) {
     const [queueEntries, setQueueEntries] = useState("No one is in the queue");
     const [queueChanges, setQueueChanges] = useState(0);
-    const [userInfo, setUserInfo] = useState('');
+    
     const postRequest = {
         method: 'POST',
         headers: {'Content-Type': 'application/json'}
@@ -25,17 +25,6 @@ export default function Queues({
             .then(resp => setQueueEntries(resp.data.queue))
             .catch(err => console.log(err))
     }, [queueChanges])
-
-    useEffect( () => {
-        fetch(`/users/one?email=${user.email}`)
-            .then(resp => resp.json())
-            .then(resp => {
-                console.log("RES")
-                console.log(resp)
-                setUserInfo(resp)})
-            .catch(err => console.log(err))
-        
-    }, [user])
 
     function joinQueue() {
         fetch("/queues/addQueueEntryDatabase?queueID=0", postRequest)
@@ -106,8 +95,7 @@ export default function Queues({
 
     return (
         <div style={{display: "flex"}}>
-            User email: {user.email}
-            User info: {userInfo.Name}
+            {/* User email: {user.email} */}
             <Card variant="outlined" style={listStyle}>{prof}</Card>
             <Card variant="outlined" style={listStyle}>{ta}</Card>
         </div>

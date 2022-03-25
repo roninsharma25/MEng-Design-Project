@@ -19,7 +19,8 @@ export default function Navigation({
   gradient,
   courses,
   setCourse,
-  courseIndex
+  courseIndex,
+  userInfo
 }) {
   const navigate = useNavigate()
   const index = courseIndex
@@ -92,7 +93,7 @@ export default function Navigation({
       </div>
       <div style={rightSide}>
         <Stack spacing={2} direction="row" style={{position:"absolute", right:0}}>
-          <Button>test</Button>
+          <Button>{userInfo.Name}, {userInfo.Type}</Button>
           <Button variant="contained" onClick={goToPosts}>Posts</Button>
           <Button variant="contained" onClick={goToQueues}>Queues</Button>
           <Tooltip title="Account settings">
