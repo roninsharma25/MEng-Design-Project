@@ -21,22 +21,42 @@ class Post:
     """
     A class to represent a post.
     """
-    def __init__(self):
-        pass
+    def __init__(self, name, question):
+        self.user = User(name)
+        self.question = question
+        self.answers = []
+    
+    """
+    Add an answer to the post.
+    """
+    def addAnswer(self, answer, user):
+        self.answers.append([ user, answer ])
+    
+    """
+    Returns the author of the post.
+    """
+    def getAuthor(self):
+        return self.user
+    
+    """
+    Returns all the answers for the post.
+    """
+    def getAnswers(self):
+        return self.answers
 
 class User:
     """
     A class to represent a user.
     """
-    def __init__(self, name, id = 0):
+    def __init__(self, name, email):
         self.name = name
-        self.id = id
+        self.email = email
     
     """
-    Returns the user's ID.
+    Returns the user's email.
     """
-    def getId(self):
-        return self.id
+    def getEmail(self):
+        return self.email
 
     """
     Returns the user's name.
