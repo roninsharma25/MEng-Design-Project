@@ -5,7 +5,9 @@
 
 from urllib import request
 from flask import *
+from storage import *
 import services.databases as db
+import time
 
 posts = Blueprint('posts', __name__, url_prefix='/posts')
 
@@ -37,7 +39,11 @@ def patch():
 
 @posts.route('/', methods=['POST'])
 def post():
-    success = db.post('Posts', 'Cornell_University', request.json)
+    post_request = request.get_json()
+    post_request['timeAdded'] = time.time()
+    post = Post(post_request)
+
+    success = db.post('Posts', 'Cornell_University', post.to_bson())
     result = {"success": success}
     result["message"] = "Post successfully added" if success else "Post unsuccessfully added"
     return result

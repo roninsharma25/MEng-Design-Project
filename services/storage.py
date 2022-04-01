@@ -7,6 +7,8 @@ import services.databases as db
 import numpy as np
 import time
 
+from fastapi.encoders import jsonable_encoder
+
 # MODELS ***********************************************************************
 
 class Class:
@@ -18,13 +20,19 @@ class Class:
 
 
 class Post:
+
+    NEXT_ID = 0
+
     """
     A class to represent a post.
     """
-    def __init__(self, name, question):
+    def __init__(self, name, question, timeAdded):
         self.user = User(name)
         self.question = question
         self.answers = []
+        self.timeAdded = timeAdded
+        self.id = self.NEXT_ID
+        self.NEXT_ID += 1
     
     """
     Add an answer to the post.
@@ -43,6 +51,14 @@ class Post:
     """
     def getAnswers(self):
         return self.answers
+    
+    def to_json(self):
+        return jsonable_encoder(self, exclude_none = True)
+    
+    def to_bson(self):
+        data = self.dict(by_alias = True, exclude_none = True)
+        if data['_id'] is None:
+            data.pop('_id')
 
 class User:
     """

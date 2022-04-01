@@ -10,3 +10,4 @@ time
 numpy
 os
 locust
+fastapi
