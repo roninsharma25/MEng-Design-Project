@@ -7,9 +7,32 @@ import services.databases as db
 import numpy as np
 import time
 
+from pydantic import BaseModel, Field
+from typing import Optional
+from bson.objectid import ObjectId
 from fastapi.encoders import jsonable_encoder
 
 # MODELS ***********************************************************************
+
+class PydanticObjectId(ObjectId):
+    """
+    ObjectId field. Compatible with Pydantic.
+    """
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        return PydanticObjectId(v)
+
+    @classmethod
+    def __modify_schema__(cls, field_schema: dict):
+        field_schema.update(
+            type="string",
+            examples=["5eb7cf5a86d9755df3a6c593", "5eb7cfb05e32e07750a1756a"],
+        )
 
 class Class:
     """
@@ -59,14 +82,19 @@ class Post:
         data = self.dict(by_alias = True, exclude_none = True)
         if data['_id'] is None:
             data.pop('_id')
+        return data
 
-class User:
+class User(BaseModel):
+    id: Optional[PydanticObjectId] = Field(None, alias="_id")
+    name: str
+    email: str
+
     """
     A class to represent a user.
     """
-    def __init__(self, name, email):
-        self.name = name
-        self.email = email
+    # def __init__(self, name, email = 'test@gmail.com'):
+    #     self.name = name
+    #     self.email = email
     
     """
     Returns the user's email.
@@ -79,6 +107,17 @@ class User:
     """
     def getName(self):
         return self.name
+
+    def to_json(self):
+        return jsonable_encoder(self, exclude_none = True)
+    
+    def to_bson(self):
+        data = self.dict(by_alias = True, exclude_none = True)
+        print('DATA')
+        print(data)
+        # if data['_id'] is None:
+        #     data.pop('_id')
+        return data
 
 class Queue:
     """
@@ -156,7 +195,7 @@ class QueueEntry:
     """
     A class to represent a queue entry.
     """
-    def __init__(self, user = User(0), question = "", place = 0, classID = 0):
+    def __init__(self, user = User(name = '123', email = '123'), question = "", place = 0, classID = 0):
         self.user = user
         self.question = question
         self.place = place

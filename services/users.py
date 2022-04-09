@@ -5,6 +5,7 @@
 
 from urllib import request
 from flask import *
+from services.storage import *
 import services.databases as db
 
 users = Blueprint('users', __name__, url_prefix='/users')
@@ -24,6 +25,11 @@ def getSome():
 @users.route('/', methods=['GET'])
 def getOne():
     result = db.getOne('Users', 'Cornell_University', request.args.get('id'))
+
+    obj = User(**result)
+    print(obj.getName())
+    result = obj.to_json()
+
     return {"result": result}
 
 @users.route('/one', methods=['GET'])
@@ -44,9 +50,17 @@ def patch():
 
 @users.route('/', methods=['POST'])
 def post():
-    success = db.post('Users', 'Cornell_University', request.json)
-    result = {"success": success}
-    result["message"] = "User successfully added" if success else "User unsuccessfully added"
+    userData = request.json
+    user = User(**userData)
+
+    success = db.post('Users', 'Cornell_University', user.to_bson())#request.json)
+    result = {"success": success[0]}
+
+    if (success):
+        result["message"] = "User successfully added"
+        user.id = PydanticObjectId(str(success[1].inserted_id))
+    else:
+        result["message"] = "User unsuccessfully added"
     return result
 
 

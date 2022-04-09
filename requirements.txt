@@ -11,3 +11,5 @@ numpy
 os
 locust
 fastapi
+pydantic
+typing

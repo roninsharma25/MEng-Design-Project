@@ -5,7 +5,7 @@
 
 from urllib import request
 from flask import *
-from storage import *
+from services.storage import *
 import services.databases as db
 import time
 

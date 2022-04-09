@@ -11,25 +11,25 @@ classes = Blueprint('classes', __name__, url_prefix='/classes')
 
 @classes.route('/all', methods=['GET'])
 def getAll():
-    result = db.getAll('Classes', 'CornellUniversity')
+    result = db.getAll('Classes', 'Cornell_University')
     return {"result": result}
 
 
 @classes.route('/some', methods=['GET'])
 def getSome():
-    result = db.getSome('Classes', 'CornellUniversity', request.json)
+    result = db.getSome('Classes', 'Cornell_University', request.json)
     return {"result": result}
 
 
 @classes.route('/', methods=['GET'])
 def getOne():
-    result = db.getOne('Classes', 'CornellUniversity', request.args.get('id'))
+    result = db.getOne('Classes', 'Cornell_University', request.args.get('id'))
     return {"result": result}
 
 
 @classes.route('/', methods=['PATCH'])
 def patch():
-    success = db.patch('Classes', 'CornellUniversity', request.args.get('id'), request.json)
+    success = db.patch('Classes', 'Cornell_University', request.args.get('id'), request.json)
     result = {"success": success}
     result["message"] = "Class successfully updated" if success else "Class unsuccessfully updated"
     return result
@@ -37,15 +37,21 @@ def patch():
 
 @classes.route('/', methods=['POST'])
 def post():
-    success = db.post('Classes', 'CornellUniversity', request.json)
+    success = db.post('Classes', 'Cornell_University', request.json)
     result = {"success": success}
     result["message"] = "Class successfully added" if success else "Class unsuccessfully added"
     return result
 
+@classes.route('/addUserToClass', methods=['POST'])
+def addUserToClass():
+    data = request.json # 
+    data['User'] = {}
+    success = db.post('Classes', 'Cornell_University', data['User'])
+
 
 @classes.route('/', methods=['DELETE'])
 def delete():
-    success = db.delete('Classes', 'CornellUniversity', request.json["_id"])
+    success = db.delete('Classes', 'Cornell_University', request.json["_id"])
     result = {"success": success}
     result["message"] = "Class successfully removed" if success else "Class unsuccessfully removed"
     return result

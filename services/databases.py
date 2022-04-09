@@ -81,8 +81,8 @@ def post(database, school, json):
     """
     try:
         collection = getCollection(database, school)
-        collection.insert_one(json)
-        return True
+        id = collection.insert_one(json)
+        return True, id
     except:
         return False
 
