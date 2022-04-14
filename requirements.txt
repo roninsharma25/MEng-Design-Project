@@ -13,3 +13,4 @@ locust
 fastapi
 pydantic
 typing
+pytest
