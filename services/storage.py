@@ -11,7 +11,6 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from bson.objectid import ObjectId
 from fastapi.encoders import jsonable_encoder
-from services.users import User
 
 # MODELS ***********************************************************************
 
@@ -41,6 +40,48 @@ class Class:
     """
     def __init__(self):
         pass
+
+class User(BaseModel):
+    id: Optional[PydanticObjectId] = Field(None, alias="_id")
+    name: str
+    email: str
+    role: str
+
+    """
+    A class to represent a user.
+    """
+    # def __init__(self, name, email = 'test@gmail.com'):
+    #     self.name = name
+    #     self.email = email
+    
+    """
+    Returns the user's email.
+    """
+    def getEmail(self):
+        return self.email
+
+    """
+    Returns the user's name.
+    """
+    def getName(self):
+        return self.name
+    
+    """
+    Returns the user's role.
+    """
+    def getRole(self):
+        return self.role
+
+    def to_json(self):
+        return jsonable_encoder(self, exclude_none = True)
+    
+    def to_bson(self):
+        data = self.dict(by_alias = True, exclude_none = True)
+        print('DATA')
+        print(data)
+        # if data['_id'] is None:
+        #     data.pop('_id')
+        return data
 
 
 class Post(BaseModel):
@@ -132,48 +173,6 @@ class Post(BaseModel):
     def to_bson(self):
         return self.dict(by_alias = True, exclude_none = True)
 
-class User(BaseModel):
-    id: Optional[PydanticObjectId] = Field(None, alias="_id")
-    name: str
-    email: str
-    role: str
-
-    """
-    A class to represent a user.
-    """
-    # def __init__(self, name, email = 'test@gmail.com'):
-    #     self.name = name
-    #     self.email = email
-    
-    """
-    Returns the user's email.
-    """
-    def getEmail(self):
-        return self.email
-
-    """
-    Returns the user's name.
-    """
-    def getName(self):
-        return self.name
-    
-    """
-    Returns the user's role.
-    """
-    def getRole(self):
-        return self.role
-
-    def to_json(self):
-        return jsonable_encoder(self, exclude_none = True)
-    
-    def to_bson(self):
-        data = self.dict(by_alias = True, exclude_none = True)
-        print('DATA')
-        print(data)
-        # if data['_id'] is None:
-        #     data.pop('_id')
-        return data
-
 class Queue:
     """
     A class to represent a queue.
@@ -250,7 +249,7 @@ class QueueEntry:
     """
     A class to represent a queue entry.
     """
-    def __init__(self, user = User(name = '123', email = '123'), question = "", place = 0, classID = 0):
+    def __init__(self, user = None, question = "", place = 0, classID = 0):
         self.user = user
         self.question = question
         self.place = place
