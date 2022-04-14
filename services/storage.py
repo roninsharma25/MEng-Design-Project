@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from bson.objectid import ObjectId
 from fastapi.encoders import jsonable_encoder
+from services.users import User
 
 # MODELS ***********************************************************************
 
@@ -42,20 +43,26 @@ class Class:
         pass
 
 
-class Post:
-
-    NEXT_ID = 0
+class Post(BaseModel):
+    id: Optional[PydanticObjectId] = Field(None, alias="_id")
+    question: str
+    email: str
+    answers: list
+    timeAdded: float
+    author: User
+    studentAnswers: list
+    instructorAnswers: list
+    studentFollowups: list
+    instructorFollowups: list
 
     """
     A class to represent a post.
     """
-    def __init__(self, name, question, timeAdded):
-        self.user = User(name)
-        self.question = question
-        self.answers = []
-        self.timeAdded = timeAdded
-        self.id = self.NEXT_ID
-        self.NEXT_ID += 1
+    # def __init__(self, question, timeAdded):
+    #     self.question = question
+    #     self.answers = []
+    #     self.timeAdded = timeAdded
+    #     self.author = None
     
     """
     Add an answer to the post.
@@ -67,27 +74,69 @@ class Post:
     Returns the author of the post.
     """
     def getAuthor(self):
-        return self.user
+        return self.author
+
+    """
+    Sets the author of the post.
+    """
+    def setAuthor(self, author):
+        self.author = author
     
     """
     Returns all the answers for the post.
     """
-    def getAnswers(self):
-        return self.answers
+    def getAnswers(self, type_):
+        if (type_ == 'student'):
+            return self.studentAnswers
+        
+        return self.instructorAnswers
+    
+    """
+    Returns all the followups for the post.
+    """
+    def getFollowups(self, type_):
+        if (type_ == 'student'):
+            return self.studentFollowups
+        
+        return self.instructorFollowups
+
+    """
+    Add a followup to a post.
+
+        author: the author of the follow-up (User)
+        text: the content of the follow-up (str)
+    """
+    def addFollowup(self, author, text):
+        data = { 'author': author.to_bson(), 'content': text }
+        if (author.getRole() == 'student'):
+            self.studentFollowups.append(data)
+        else:
+            self.instructorFollowups.append(data)
+    
+    """
+    Add an answer to a post.
+
+        author: the author of the answer (User)
+        text: the content of the answer (str)
+    """
+    def addAnswer(self, author, text):
+        data = { 'author': author.to_bson(), 'content': text }
+        if (author.getRole() == 'student'):
+            self.studentAnswers.append(data)
+        else:
+            self.instructorAnswers.append(data)
     
     def to_json(self):
         return jsonable_encoder(self, exclude_none = True)
     
     def to_bson(self):
-        data = self.dict(by_alias = True, exclude_none = True)
-        if data['_id'] is None:
-            data.pop('_id')
-        return data
+        return self.dict(by_alias = True, exclude_none = True)
 
 class User(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
     name: str
     email: str
+    role: str
 
     """
     A class to represent a user.
@@ -107,6 +156,12 @@ class User(BaseModel):
     """
     def getName(self):
         return self.name
+    
+    """
+    Returns the user's role.
+    """
+    def getRole(self):
+        return self.role
 
     def to_json(self):
         return jsonable_encoder(self, exclude_none = True)

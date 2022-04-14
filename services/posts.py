@@ -7,6 +7,7 @@ from urllib import request
 from flask import *
 from services.storage import *
 import services.databases as db
+import services.users as users
 import time
 
 posts = Blueprint('posts', __name__, url_prefix='/posts')
@@ -39,9 +40,12 @@ def patch():
 
 @posts.route('/', methods=['POST'])
 def post():
-    post_request = request.get_json()
-    post_request['timeAdded'] = time.time()
-    post = Post(post_request)
+    postRequest = request.json
+    postRequest['timeAdded'] = time.time()
+
+    post = Post(**postRequest)
+    postAuthor = users.getOneByEmail(postRequest['userEmail'])
+    post.setAuthor(postAuthor)
 
     success = db.post('Posts', 'Cornell_University', post.to_bson())
     result = {"success": success}
