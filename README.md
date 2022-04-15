@@ -26,6 +26,6 @@ Runs memcached.
 
 Runs Locust load testing tool.
 
-### `make run-jaege-tracing-container`
+### `make run-jaeger-tracing-container`
 
 Runs Jaeger tracing infrastructure.
