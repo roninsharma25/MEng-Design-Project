@@ -33,11 +33,14 @@ def getOne():
     return {"result": result}
 
 @users.route('/one', methods=['GET'])
-def getOneByEmail():
-    result = db.getCollection('Users', 'Cornell_University').find_one({'Email': request.args.get('email')})
+def getOneByEmail(userEmail = None):
+    result = db.getCollection('Users', 'Cornell_University').find_one({'Email': userEmail if userEmail else request.args.get('email')})
     result['_id'] = str(result['_id'])
 
-    return result
+    obj = User(**result)
+    result = obj.to_json()
+
+    return {"result": result}
 
 
 @users.route('/', methods=['PATCH'])

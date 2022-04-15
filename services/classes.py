@@ -22,8 +22,8 @@ def getSome():
 
 
 @classes.route('/', methods=['GET'])
-def getOne():
-    result = db.getOne('Classes', 'Cornell_University', request.args.get('id'))
+def getOne(data = None):
+    result = db.getCollection('Classes', 'Cornell_University').find_one(data if data else request.json)
     return {"result": result}
 
 
@@ -43,11 +43,11 @@ def post():
     return result
 
 @classes.route('/addUserToClass', methods=['POST'])
-def addUserToClass():
-    data = request.json # 
-    data['User'] = {}
-    success = db.post('Classes', 'Cornell_University', data['User'])
-
+def addUserToClass(user = None, class_ = None):
+    success = db.post('Classes', 'Cornell_University', {'Class Name': class_, 'User': user.to_bson()} if user else request.json)
+    result = {"success": success}
+    result["message"] = "User successfully added to class" if success else "User unsuccessfully added to class"
+    return result
 
 @classes.route('/', methods=['DELETE'])
 def delete():
