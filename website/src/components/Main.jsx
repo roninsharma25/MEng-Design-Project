@@ -11,17 +11,37 @@ import Settings from './Settings'
 import Account from './Account'
 import Posts from '../pages/Posts'
 import Queues from '../pages/Queues'
+import TAQueues from '../pages/TAQueues'
+import StudentQueues from '../pages/StudentQueues'
+import { FILL_PARENT, FILL_WIDTH } from "../utils/styles"
+import { NAVBAR_HEIGHT } from "../utils/constants"
 
 export default function Main({
-    authenticate,
-    gradient,
+    setAuthenticated,
     user
 }) {
     
     const courses = ["CS 1110", "CS 2110", "CS 3110"]
     const [course, setCourse] = useState(0);
-
     const [userInfo, setUserInfo] = useState('');
+    const [dimensions, setDimensions] = useState({ 
+        height: window.innerHeight,
+        width: window.innerWidth
+    })
+
+    const contentStyle = {
+        ...FILL_PARENT
+    }
+
+    useEffect(() => {
+        const handleResize = () => {
+            setDimensions({
+                height: window.innerHeight,
+                width: window.innerWidth
+            })
+        }    
+        window.addEventListener('resize', handleResize)
+    })
 
     useEffect( () => {
         fetch(`/users/one?email=${user.email}`)
@@ -35,15 +55,23 @@ export default function Main({
     return (
         <Router>
             <div>
-                <Navigation authenticate={authenticate} gradient={gradient} 
-                    courses={courses} setCourse={setCourse} courseIndex={course} userInfo={userInfo}/>
-                <Routes>
-                <Route path="/settings" element={<Settings />}/>
-                <Route path="/account" element={<Account />}/>
-                <Route path="/posts" element={<Posts />}/>
-                <Route path="/queues" element={<Queues user={user} />}/>
-                <Route path="/" element={<Posts />}/>
-                </Routes>
+                <div style={{...FILL_WIDTH, paddingTop: NAVBAR_HEIGHT, height: window.innerHeight - NAVBAR_HEIGHT}}>
+                    <Routes>
+                        <Route path="/students" element={<StudentQueues/>} />
+                        <Route path="/instructor" element={<TAQueues/>} />
+                        <Route path="/settings" element={<Settings />}/>
+                        <Route path="/account" element={<Account />}/>
+                        <Route path="/posts" element={<Posts />}/>
+                        <Route path="/queues" element={<Queues user={user} />}/>
+                        <Route path="/" element={<Posts />}/>
+                    </Routes>
+                </div>
+                <Navigation 
+                    setAuthenticated={setAuthenticated} 
+                    courses={courses} 
+                    setCourse={setCourse} 
+                    courseIndex={course} 
+                    userInfo={userInfo}/>
             </div>
         </Router>
     )

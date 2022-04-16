@@ -4,6 +4,15 @@ import {
     Button
 } from "@mui/material"
 
+// Style imports
+import { 
+    CENTER_CONTENT, 
+    CENTER_VERTICAL, 
+    CENTER_HORTIZONTAL, 
+    ROUNDED_CONTAINER,
+    FILL_WHITE
+} from "../utils/styles";
+
 // Navigation imports
 import {
     useNavigate

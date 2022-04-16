@@ -8,11 +8,20 @@ import {
     Card
 } from "@mui/material"
 
+// Navigation imports
+import {
+    useNavigate
+} from "react-router-dom"
+
 export default function Queues({
     user
 }) {
     const [queueEntries, setQueueEntries] = useState("No one is in the queue");
     const [queueChanges, setQueueChanges] = useState(0);
+
+    const navigate = useNavigate();
+    const goToTAQueues = () => navigate("/instructor")
+    const goToStudentQueues = () => navigate("/students")
     
     const postRequest = {
         method: 'POST',
@@ -42,18 +51,6 @@ export default function Queues({
         fetch("/queues/removeQueueEntryDatabase?queueID=0?entryID=0", postRequest)
             .then(() => setQueueChanges(queueChanges + 1))
             .catch(err => console.log(err))  
-    }
-
-    const sidebar = {
-        width: 800,
-        height: 800,
-        overflow: "auto"
-    }
-
-    const content = {
-        width: "100%",
-        height: "100%",
-        overflow: "auto"
     }
 
     const listStyle = {
@@ -88,7 +85,18 @@ export default function Queues({
             <h2>TA'S OH (5PM - 9PM)</h2>
             <h3># Students ahead: 10</h3>
             <h3>Average wait time: 2 hours</h3>
-            <Button variant="contained">Join Queue!</Button>
+            <Button variant="contained" onClick={goToTAQueues}>Join Queue!</Button>
+        </CardContent>
+    </React.Fragment>
+    );
+
+    const student = (
+    <React.Fragment>
+        <CardContent>
+            <h2>TA'S OH (5PM - 9PM)</h2>
+            <h3># Students ahead: 10</h3>
+            <h3>Average wait time: 2 hours</h3>
+            <Button variant="contained" onClick={goToStudentQueues}>Join Queue!</Button>
         </CardContent>
     </React.Fragment>
     );
@@ -98,6 +106,7 @@ export default function Queues({
             {/* User email: {user.email} */}
             <Card variant="outlined" style={listStyle}>{prof}</Card>
             <Card variant="outlined" style={listStyle}>{ta}</Card>
+            <Card variant="outlined" style={listStyle}>{student}</Card>
         </div>
         
     )

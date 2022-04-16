@@ -9,14 +9,13 @@ import {
   Avatar,
   Stack, Button
 } from "@mui/material";
+import { FILL_GRADIENT, FILL_WIDTH } from "../utils/styles"
 import HomeIcon from "@mui/icons-material/Home"
 import { Link, useNavigate } from "react-router-dom"
-
-
+import { NAVBAR_HEIGHT } from "../utils/constants"
 
 export default function Navigation({
-  authenticate,
-  gradient,
+  setAuthenticated,
   courses,
   setCourse,
   courseIndex,
@@ -27,7 +26,9 @@ export default function Navigation({
   const selector = useRef(null);
 
   const style = {
-    ...gradient,
+    ...FILL_GRADIENT,
+    ...FILL_WIDTH,
+    height: NAVBAR_HEIGHT,
     marginTop: 0,
     backgroundColor: "blue",
     overflow: "auto",
@@ -50,7 +51,7 @@ export default function Navigation({
   }
 
   function logout() {
-    authenticate(false)
+    setAuthenticated(false)
     navigate("/")
   }
 
@@ -101,9 +102,6 @@ export default function Navigation({
             onClick={handleClick}
             size="small"
             sx={{ ml: 2 }}
-            // aria-controls={open ? 'account-menu' : undefined}
-            // aria-haspopup="true"
-            // aria-expanded={open ? 'true' : undefined}
           >
             <Avatar sx={{ width: 50, height: 50 }}>M</Avatar>
           </IconButton>
@@ -117,20 +115,3 @@ export default function Navigation({
     )
 
 }
-
-{/* <ul>
-  <li>
-    <Link to="/">Home</Link>
-  </li>
-  <li>
-    <Link to="/settings">Settings</Link>
-  </li>
-  <li>
-    <Link to="/account">Account</Link>
-    <ul>
-      <li onClick={logout}>
-        <Link to="/">Logout</Link>
-      </li>
-    </ul>
-  </li>
-</ul> */}

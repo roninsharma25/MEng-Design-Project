@@ -2,7 +2,7 @@ import "./App.css"
 import React, { useState, useEffect } from "react"
 
 import Main from "./components/Main"
-import Unauthorized from "./components/Unauthorized"
+import Start from "./components/Start"
 import firebase from './components/Firebase';
 
 function App() {
@@ -19,23 +19,9 @@ function App() {
     })
   }, [])
 
-  const gradient = {
-    backgroundImage: "linear-gradient(to right, #623bff, #4dacff)",
-  }
-
-  const centerStyle = {
-    borderRadius: "25px",
-    padding: "50px",
-    margin: "auto", 
-    marginTop: "100px",
-    width: "50%",
-    textAlign: "center"
-}
-
   return authenticated 
-    ? <Main authenticate={setAuthenticated} gradient={gradient} user={user}/> 
-    : <Unauthorized authenticate={setAuthenticated} centerStyle={{...centerStyle, ...gradient}}/>
-
+    ? <Main setAuthenticated={setAuthenticated} user={user}/> 
+    : <Start setAuthenticated={setAuthenticated}/>
 }
 
 export default App

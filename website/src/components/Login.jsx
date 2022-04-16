@@ -5,6 +5,15 @@ import {
 } from "@mui/material"
 import useEnhancedEffect from "@mui/material/utils/useEnhancedEffect";
 
+// Style imports
+import { 
+    CENTER_CONTENT, 
+    CENTER_VERTICAL, 
+    CENTER_HORTIZONTAL, 
+    ROUNDED_CONTAINER,
+    FILL_WHITE
+} from "../utils/styles";
+
 // Navigation imports
 import {
     useNavigate
@@ -15,24 +24,28 @@ import {
     signInWithGoogle
 } from "./Firebase"
 
-
 export default function Login({ 
-    authenticate,
-    centerStyle
+    setAuthenticated
  }) {
     const navigate = useNavigate();
-
-    function goToSignup() {
-        navigate("/signup")
-    }
+    const goToSignup = () => navigate("/signup")
+    const goToWelcome = () => navigate("/")
 
     function login() {
-        authenticate(true)
+        setAuthenticated(true)
         navigate("/")
     }
 
+    const containerStyle = {
+        ...CENTER_CONTENT,
+        ...CENTER_VERTICAL,
+        ...CENTER_HORTIZONTAL,
+        ...ROUNDED_CONTAINER,
+        ...FILL_WHITE
+    }
+
     return (
-        <div style={centerStyle}>
+        <div style={containerStyle}>
             <h1>Login</h1>
             <TextField id="outlined-username-input" label="Username" variant="outlined" />
             <br/>
@@ -49,6 +62,8 @@ export default function Login({
             <Button variant="text" onClick={goToSignup}>
                 I don't have an account yet
             </Button>
+            <br/>
+            <Button variant="text" onClick={goToWelcome}>BACK</Button>
         </div>
     )
 }
