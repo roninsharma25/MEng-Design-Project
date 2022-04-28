@@ -6,6 +6,7 @@
 from urllib import request
 from flask import *
 import services.databases as db
+import services.users as users
 
 classes = Blueprint('classes', __name__, url_prefix='/classes')
 
@@ -44,8 +45,17 @@ def post():
 
 @classes.route('/addUserToClass', methods=['POST'])
 def addUserToClass(user = None, class_ = None):
-    success = db.post('Classes', 'Cornell_University', {'Class Name': class_, 'User': user.to_bson()} if user else request.json)
-    result = {"success": success}
+    # request.json example: {'class_': class_, 'email': 'test123@gmail.com'}
+    postRequest = request.json 
+    user = users.getOneByEmail(postRequest['email'])['result'].to_bson()
+    postRequest['user'] = user
+
+    print('REQUEST')
+    print(postRequest)
+
+    success = db.post('Classes', 'Cornell_University', postRequest, False)
+    id = success[1]
+    result = {"success": success[0]}
     result["message"] = "User successfully added to class" if success else "User unsuccessfully added to class"
     return result
 
