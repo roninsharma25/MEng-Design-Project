@@ -12,12 +12,16 @@ client = MongoClient(connectionString)
 
 # FUNCTIONS ********************************************************************
 
-def getCollection(database, school):
+def getCollection(database, school, schoolFlag = True, collection = ''):
     """
     Returns the collection of a school within a database.
     """
     assert database in ["Classes", "Posts", "Queues", "Users"]
-    return client[database][school]
+
+    if schoolFlag:
+        return client[database][school]
+    else:
+        return client[database][collection]
 
 
 def getAll(database, school):
@@ -48,18 +52,19 @@ def getSome(database, school, json):
     return result
 
 
-def getOne(database, school, objectId):
+def getOne(database, school, objectId, schoolFlag = True, extraData = ''):
     """
     Returns a single object with the given objectId in the corresponding 
     collection denoted by the database and school.
     """
-    collection = getCollection(database, school)
+    collection = getCollection(database, school, schoolFlag, extraData)
+
     result = collection.find_one({"_id": ObjectId(objectId)})
     result["_id"] = str(result["_id"])
     return result
 
 
-def patch(database, school, objectId, json):
+def patch(database, school, objectId, json, schoolFlag = True, extraData = ''):
     """
     Updates a single object to the corresponding collection denoted by the 
     database and school with the data given by the json dictionary. Returns True 
@@ -73,14 +78,14 @@ def patch(database, school, objectId, json):
         return False
 
 
-def post(database, school, json):
+def post(database, school, json, schoolFlag = False):
     """
     Adds a single object to the corresponding collection denoted by the database
     and school with the data given by the json dictionary. Returns True iff the 
     operation was successful.
     """
     try:
-        collection = getCollection(database, school)
+        collection = getCollection(database, school, schoolFlag, json['class_'])
         id = collection.insert_one(json)
         return True, id
     except:

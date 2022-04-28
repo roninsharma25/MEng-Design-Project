@@ -5,7 +5,7 @@
 
 import services.databases as db
 import numpy as np
-import time
+import datetime
 
 from pydantic import BaseModel, Field
 from typing import Optional
@@ -43,9 +43,9 @@ class Class:
 
 class User(BaseModel):
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
-    name: str
-    email: str
-    role: str
+    name: str = Field(alias="Name")
+    email: str = Field(alias="Email")
+    role: str = Field(alias="Type")
 
     """
     A class to represent a user.
@@ -85,16 +85,17 @@ class User(BaseModel):
 
 
 class Post(BaseModel):
-    id: Optional[PydanticObjectId] = Field(None, alias="_id")
+    class_: str
     question: str
     email: str
-    answers: list
-    timeAdded: float
+    timeAdded: str
     author: User
-    studentAnswers: list
-    instructorAnswers: list
-    studentFollowups: list
-    instructorFollowups: list
+    answers: Optional[list]
+    studentAnswers: Optional[list]
+    instructorAnswers: Optional[list]
+    studentFollowups: Optional[list]
+    instructorFollowups: Optional[list]
+    id: Optional[PydanticObjectId] = Field(None, alias="_id")
 
     """
     A class to represent a post.
@@ -254,7 +255,7 @@ class QueueEntry:
         self.question = question
         self.place = place
         self.classID = classID
-        self.startTime = time.time()
+        self.startTime = str(datetime.now())
 
     """
     Returns the user for this queue entry.
@@ -272,7 +273,8 @@ class QueueEntry:
     Returns the time (in minutes) spent in the queue.
     """
     def getTime(self):
-        return int((time.time() - self.startTime) / 60)
+        # UPDATE TIME DIFF CALCULATION
+        return int((str(datetime.now()) - self.startTime) / 60)
     
     """
     Update's the user's place in the queue.
