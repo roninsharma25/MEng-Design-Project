@@ -6,15 +6,21 @@
 from urllib import request
 from flask import *
 from services.storage import *
+from datetime import datetime
+from bson import json_util
 import services.databases as db
 import services.users as users
-from datetime import datetime
+import json
+
+
 
 posts = Blueprint('posts', __name__, url_prefix='/posts')
 
 @posts.route('/all', methods=['GET'])
 def getAll():
-    result = db.getAll('Posts', 'Cornell_University')
+    result = db.getAll('Posts', 'Cornell_University', False, 'JAM_1110')
+    result = json.loads(json_util.dumps(result))
+
     return {"result": result}
 
 

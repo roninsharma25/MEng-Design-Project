@@ -13,7 +13,18 @@ import { BACKEND, SIDEBAR_WIDTH } from "../utils/constants"
 export default function Posts() {
 
   const [index, setIndex] = useState(-1)
-  // const [posts, setPosts] = useState([])
+  const [posts_, setPosts] = useState([])
+
+  useEffect( () => {
+    fetch("/posts/all")
+      .then(resp => resp.json())
+      .then(resp => setPosts(resp.result))
+      .catch(err => console.log(err))
+      
+    console.log('ALL POSTS')
+    console.log(posts_);
+  }, [])
+  
 
   const sidebar = {
     width: SIDEBAR_WIDTH,
@@ -77,8 +88,8 @@ export default function Posts() {
       </React.Fragment>
     );
 
-  const posts = [0, 1, 2, 3, 4, 5, 6]
-  const previews = posts.map((elm, i) => <PostPreview index={i} setIndex={setIndex} selectedIndex={index} />)
+  const posts = [0, 1, 2] //, 3, 4, 5, 6]
+  const previews = posts.map((elm, i) => <PostPreview index={i} setIndex={setIndex} selectedIndex={index} author={'test'} />)
   return (
       <div style={{display: "flex"}}>
           <div id="sidebar" style={sidebar}>

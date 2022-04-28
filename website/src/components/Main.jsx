@@ -44,12 +44,13 @@ export default function Main({
     })
 
     useEffect( () => {
-        fetch(`/users/one?email=${user.email}`)
+        if (user.email) {
+            fetch(`/users/one?email=${user.email}`)
             .then(resp => resp.json())
             .then(resp => {
                 setUserInfo(resp)})
             .catch(err => console.log(err))
-        
+        }
     }, [user])
 
     return (

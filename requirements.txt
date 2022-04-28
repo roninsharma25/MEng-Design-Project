@@ -8,10 +8,10 @@ Werkzeug==0.16.0
 python-memcached
 time
 numpy
-os
 locust
 fastapi
 pydantic
 typing
 pytest
 datetime
+bson

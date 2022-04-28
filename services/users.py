@@ -6,7 +6,9 @@
 from urllib import request
 from flask import *
 from services.storage import *
+from bson import json_util
 import services.databases as db
+import json
 
 users = Blueprint('users', __name__, url_prefix='/users')
 
@@ -43,6 +45,7 @@ def getOneByEmail(userEmail = None):
     obj = User(**result)
     result = obj #obj.to_json()
 
+    result = json.loads(json_util.dumps(result))
     return {"result": result}
 
 

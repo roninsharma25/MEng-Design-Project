@@ -24,17 +24,18 @@ def getCollection(database, school, schoolFlag = True, collection = ''):
         return client[database][collection]
 
 
-def getAll(database, school):
+def getAll(database, school, schoolFlag = True, extraData = ''):
     """
     Returns a list of objects in the corresponding collection denoted by the 
     database and school.
     """
-    collection = getCollection(database, school)
+    collection = getCollection(database, school, schoolFlag, extraData)
     cursor = collection.find()
     result = []
     for element in cursor:
         element["_id"] = str(element["_id"])
         result.append(element)
+        print(type(element))
     return result
 
 
