@@ -71,8 +71,11 @@ def patch(database, school, objectId, json, schoolFlag = True, extraData = ''):
     iff the operation was successful.
     """
     try:
-        collection = getCollection(database, school)
+        collection = getCollection(database, school, schoolFlag, extraData)
+        print("AFTER 1")
+        print(json)
         collection.update_one({"_id": ObjectId(objectId)}, {"$set": json})
+        print("AFTER 2")
         return True
     except:
         return False

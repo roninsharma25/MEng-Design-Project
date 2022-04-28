@@ -66,20 +66,16 @@ def delete():
 def addAnswerToPost():
     patchRequest = request.json # include post id
     patchRequest['timeUpdated'] = str(datetime.now())
+    
     class_ = request.json['class']
     id = request.json['_id']
-
     user = users.getOneByEmail(patchRequest['email'])['result']
     
     # Based on the post id, get the post object
     post = Post(**db.getOne('Posts', 'Cornell_University', id, False, class_))
-    print()
-    print(post)
     post.addAnswer(user, request.json['answer'])
 
-    print('ADDED ANSWER')
-
-    success = db.patch('Posts', 'Cornell_University', id, post.to_json(), False, class_)
+    success = db.patch('Posts', 'Cornell_University', id, post.to_bson(), False, class_)
     result = {"success": success}
     result["message"] = "Post successfully updated" if success else "Post unsuccessfully updated"
     return result

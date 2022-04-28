@@ -91,8 +91,10 @@ class Post(BaseModel):
     timeAdded: str
     author: User
     answers: Optional[list]
-    studentAnswers: Optional[list]
-    instructorAnswers: Optional[list]
+    #studentAnswers: Optional[list]
+    studentAnswers = []
+    #instructorAnswers: Optional[list]
+    instructorAnswers = []
     studentFollowups: Optional[list]
     instructorFollowups: Optional[list]
     id: Optional[PydanticObjectId] = Field(None, alias="_id")
@@ -150,7 +152,7 @@ class Post(BaseModel):
     """
     def addFollowup(self, author, text):
         data = { 'author': author.to_bson(), 'content': text }
-        if (author.getRole() == 'student'):
+        if (author.getRole().lower() == 'student'):
             self.studentFollowups.append(data)
         else:
             self.instructorFollowups.append(data)
@@ -163,7 +165,7 @@ class Post(BaseModel):
     """
     def addAnswer(self, author, text):
         data = { 'author': author.to_bson(), 'content': text }
-        if (author.getRole() == 'student'):
+        if (author.getRole().lower() == 'student'):
             self.studentAnswers.append(data)
         else:
             self.instructorAnswers.append(data)
