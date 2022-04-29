@@ -49,7 +49,13 @@ def post():
     postRequest = request.json
     postRequest['timeAdded'] = str(datetime.now())
     user = users.getOneByEmail(postRequest['email'])
-    postRequest['author'] = user['result'].to_bson()
+    print("RESULT")
+    print
+    print(user['result2'])
+    postRequest['author'] = user['result2'] #.to_json()
+    postRequest['author']['_id'] = user['userID']
+    print('REQUEST')
+    print(postRequest)
     post = Post(**postRequest)
 
     success = db.post('Posts', 'Cornell_University', post.to_bson())
@@ -75,11 +81,17 @@ def addAnswerToPost():
     
     class_ = request.json['class']
     id = request.json['_id']
-    user = users.getOneByEmail(patchRequest['email'])['result']
+    user = users.getOneByEmail(patchRequest['email'])
+
+    author = user['result2']
+    author['_id'] = user['userID']
+    user = User(**author)
+
     
     # Based on the post id, get the post object
     post = Post(**db.getOne('Posts', 'Cornell_University', id, False, class_))
     post.addAnswer(user, request.json['answer'])
+
 
     success = db.patch('Posts', 'Cornell_University', id, post.to_bson(), False, class_)
     result = {"success": success}

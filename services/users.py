@@ -37,7 +37,8 @@ def getOne():
 @users.route('/one', methods=['GET'])
 def getOneByEmail(userEmail = None):
     result = db.getCollection('Users', 'Cornell_University', schoolFlag = True).find_one({'Email': userEmail if userEmail else request.args.get('email')})
-    result['_id'] = str(result['_id'])
+    id = str(result['_id'])
+    result['_id'] = id
 
     print()
     print(result)
@@ -46,7 +47,7 @@ def getOneByEmail(userEmail = None):
     result = obj #obj.to_json()
 
     result = json.loads(json_util.dumps(result))
-    return {"result": result}
+    return {"result": result, "result2": obj.to_json(), 'userID': id}
 
 
 @users.route('/', methods=['PATCH'])
