@@ -1,5 +1,18 @@
 # helpme.out by SAL
 
+A microservice-based application to simplify after-lecture activities. We are currently developing the queueing, posting, users, and classes services.
+
+<img src="assets/Dependency-Graph.png" alt="Dependency Diagram" width="1000"/>
+
+
+## Repository Organization
+
+- _benchmarking_: performance testing using Locust
+- _services_: application logic and storage services
+- _testing_: pytest testing suite
+- _website_: frontend services
+- _archive_: old versions of frontend services
+
 ## Available Scripts
  
 ### `make setup` 
