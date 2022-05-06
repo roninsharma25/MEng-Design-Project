@@ -46,6 +46,7 @@ class User(BaseModel):
     name: str = Field(alias="Name")
     email: str = Field(alias="Email")
     role: str = Field(alias="Type")
+    class_: str
 
     """
     A class to represent a user.
