@@ -79,12 +79,13 @@ def addAnswerToPost():
     patchRequest = request.json # include post id
     patchRequest['timeUpdated'] = str(datetime.now())
     
-    class_ = request.json['class']
+    class_ = 'JAM_1110' #request.json['class']
     id = request.json['_id']
     user = users.getOneByEmail(patchRequest['email'])
 
     author = user['result2']
     author['_id'] = user['userID']
+    author['class_'] = 'JAM_1110'
     user = User(**author)
 
     

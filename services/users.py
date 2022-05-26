@@ -39,7 +39,7 @@ def getOneByEmail(userEmail = None):
     result = db.getCollection('Users', 'Cornell_University', schoolFlag = True).find_one({'Email': userEmail if userEmail else request.args.get('email')})
     id = str(result['_id'])
     result['_id'] = id
-    result['class_'] = request.args.get('class_')
+    result['class_'] = 'JAM_1110' #request.args.get('class_')
 
     print()
     print(result)

@@ -7,7 +7,8 @@ A microservice-based application to simplify after-lecture activities. We are cu
 
 ## Repository Organization
 
-- _benchmarking_: performance testing using Locust
+- _wrk_: workload generator scripts using Locust
+- _tracing_: tracing scripts using Jaeger
 - _services_: application logic and storage services
 - _testing_: pytest testing suite
 - _website_: frontend services
@@ -37,7 +38,7 @@ Runs memcached.
 
 ### `make run-locust`
 
-Runs Locust load testing tool.
+Runs Locust workload generator tool.
 
 ### `make run-jaeger-tracing-container`
 
