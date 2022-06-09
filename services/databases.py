@@ -4,32 +4,29 @@
 # Version: 14 February 2022
 
 import os
+
 from pymongo import MongoClient
-from bson.objectid import ObjectId
 
 connectionString = f"mongodb+srv://sal:{os.getenv('DB_PW')}@letmeout-east.nbpq2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 client = MongoClient(connectionString)
 
 # FUNCTIONS ********************************************************************
 
-def getCollection(database, school, schoolFlag = True, collection = ''):
+def getCollection(database, school):
     """
     Returns the collection of a school within a database.
     """
     assert database in ["Classes", "Posts", "Queues", "Users"]
 
-    if schoolFlag:
-        return client[database][school]
-    else:
-        return client[database][collection]
+    return client[database][school]
 
 
-def getAll(database, school, schoolFlag = True, extraData = ''):
+def getAll(database, school):
     """
     Returns a list of objects in the corresponding collection denoted by the 
     database and school.
     """
-    collection = getCollection(database, school, schoolFlag, extraData)
+    collection = getCollection(database, school)
     cursor = collection.find()
     result = []
     for element in cursor:
@@ -53,59 +50,55 @@ def getSome(database, school, json):
     return result
 
 
-def getOne(database, school, objectId, schoolFlag = True, extraData = ''):
+def getOne(database, school, searchJSON):
     """
-    Returns a single object with the given objectId in the corresponding 
+    Returns a single object with the given attribute(s) in the corresponding 
     collection denoted by the database and school.
     """
-    collection = getCollection(database, school, schoolFlag, extraData)
+    collection = getCollection(database, school)
 
-    result = collection.find_one({"_id": ObjectId(objectId)})
+    result = collection.find_one(searchJSON)
     result["_id"] = str(result["_id"])
     return result
 
 
-def patch(database, school, objectId, json, schoolFlag = True, extraData = ''):
+def patch(database, school, searchJSON, json):
     """
     Updates a single object to the corresponding collection denoted by the 
     database and school with the data given by the json dictionary. Returns True 
     iff the operation was successful.
     """
     try:
-        collection = getCollection(database, school, schoolFlag, extraData)
-        print("AFTER 1")
-        print(json)
-        collection.update_one({"_id": ObjectId(objectId)}, {"$set": json})
-        print("AFTER 2")
+        collection = getCollection(database, school)
+        collection.update_one(searchJSON, {"$set": json})
         return True
     except:
         return False
 
 
-def post(database, school, json, schoolFlag = False):
+def post(database, school, json):
     """
     Adds a single object to the corresponding collection denoted by the database
     and school with the data given by the json dictionary. Returns True iff the 
     operation was successful.
     """
     try:
-        collection = getCollection(database, school, schoolFlag, json['class_'])
+        collection = getCollection(database, school)
         id = collection.insert_one(json)
-        return True, id
+        return True
     except:
         return False
 
 
-def delete(database, school, objectId):
+def delete(database, school, searchJSON):
     """
-    Removes a single object with the given objectId from the corresponding 
+    Removes a single object with the given attribute(s) from the corresponding 
     collection denoted by the database and school. Returns True iff the 
     operation was successful.
     """
     try:
-        print(objectId)
         collection = getCollection(database, school)
-        collection.delete_one({"_id": ObjectId(objectId)})
+        collection.delete_one(searchJSON)
         return True
     except:
         return False
