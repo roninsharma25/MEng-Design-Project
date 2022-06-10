@@ -12,15 +12,12 @@ import services.databases as db
 import services.users as users
 import json
 
-
-
 posts = Blueprint('posts', __name__, url_prefix='/posts')
 
 @posts.route('/all', methods=['GET'])
 def getAll():
-    result = db.getAll('Posts', 'Cornell_University', False, 'JAM_1110')
-    result = json.loads(json_util.dumps(result))
-
+    # request.json: {'class_': 'JAM_1110'}
+    result = db.getSome('Posts', 'Cornell_University', request.json)
     return {"result": result}
 
 
@@ -32,7 +29,7 @@ def getSome():
 
 @posts.route('/', methods=['GET'])
 def getOne():
-    result = db.getOne('Posts', 'Cornell_University', request.args.get('id'))
+    result = db.getOne('Posts', 'Cornell_University', request.json)
     return {"result": result}
 
 

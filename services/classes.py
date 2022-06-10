@@ -22,19 +22,19 @@ def getSome():
     return {"result": result}
 
 
-@classes.route('/', methods=['GET'])
-def getOne(data = None):
-    result = db.getCollection('Classes', 'Cornell_University').find_one(data if data else request.json)
+@classes.route('/one', methods=['GET'])
+def getOne():
+    result = db.getOne('Classes', 'Cornell_University', request.json)
     return {"result": result}
 
 
 @classes.route('/', methods=['PATCH'])
-def patch():
-    success = db.patch('Classes', 'Cornell_University', request.args.get('id'), request.json)
+def patch(data):
+    json = data if data is not None else request.json
+    success = db.patch('Classes', 'Cornell_University', json['searchData'], json['newData'])
     result = {"success": success}
     result["message"] = "Class successfully updated" if success else "Class unsuccessfully updated"
     return result
-
 
 @classes.route('/', methods=['POST'])
 def post():
@@ -43,25 +43,18 @@ def post():
     result["message"] = "Class successfully added" if success else "Class unsuccessfully added"
     return result
 
-@classes.route('/addUserToClass', methods=['POST'])
-def addUserToClass(user = None, class_ = None):
-    # request.json example: {'class_': class_, 'email': 'test123@gmail.com'}
-    postRequest = request.json 
-    user = users.getOneByEmail(postRequest['email'])['result'].to_bson()
-    postRequest['user'] = user
-
-    print('REQUEST')
-    print(postRequest)
-
-    success = db.post('Classes', 'Cornell_University', postRequest, False)
-    id = success[1]
-    result = {"success": success[0]}
-    result["message"] = "User successfully added to class" if success else "User unsuccessfully added to class"
+# INCOMPLETE
+@classes.route('/addUserToClass', methods=['PATCH'])
+def addUserToClass(email = None, class_ = None):
+    data = { 'email': email, 'class': class_ } if email is not None else request.json
+    result = patch({ 'searchData': { 'email': data['email'] }, 'newData': data })
+    result["message"] = "User successfully added to class" if "unsuccess" not in result["message"] else "User unsuccessfully added to class"
     return result
+
 
 @classes.route('/', methods=['DELETE'])
 def delete():
-    success = db.delete('Classes', 'Cornell_University', request.json["_id"])
+    success = db.delete('Classes', 'Cornell_University', request.json)
     result = {"success": success}
     result["message"] = "Class successfully removed" if success else "Class unsuccessfully removed"
     return result
