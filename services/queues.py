@@ -13,25 +13,32 @@ queues = Blueprint('queues', __name__, url_prefix='/queues')
 
 @queues.route('/all', methods=['GET'])
 def getAll():
-    result = db.getAll('Queues', 'CornellUniversity')
+    result = db.getAll('Queues', 'Cornell_University')
     return {"result": result}
 
 
 @queues.route('/some', methods=['GET'])
 def getSome():
-    result = db.getSome('Queues', 'CornellUniversity', request.json)
+    result = db.getSome('Queues', 'Cornell_University', request.json)
     return {"result": result}
 
 
-@queues.route('/', methods=['GET'])
+@queues.route('/oneQueue', methods=['GET'])
 def getOne():
-    result = db.getOne('Queues', 'CornellUniversity', request.args.get('id'))
+    result = db.getOne('Queues', 'Cornell_University', request.json)
+    return {"result": result}
+
+# ADD MORE LOGIC
+@queues.route('/oneQueueEntry', methods=['GET'])
+def getOne():
+    result = db.getOne('Queues', 'Cornell_University', request.json)
     return {"result": result}
 
 
 @queues.route('/', methods=['PATCH'])
 def patch():
-    success = db.patch('Queues', 'CornellUniversity', request.args.get('id'), request.json)
+    json = request.json
+    success = db.patch('Queues', 'Cornell_University', json['searchData'], json['newData'])
     result = {"success": success}
     result["message"] = "Query successfully updated" if success else "Query unsuccessfully updated"
     return result
@@ -39,7 +46,7 @@ def patch():
 
 @queues.route('/', methods=['POST'])
 def post():
-    success = db.post('Queues', 'CornellUniversity', request.json)
+    success = db.post('Queues', 'Cornell_University', request.json)
     result = {"success": success}
     result["message"] = "Query successfully added" if success else "Query unsuccessfully added"
     return result
@@ -47,7 +54,7 @@ def post():
 
 @queues.route('/', methods=['DELETE'])
 def delete():
-    success = db.delete('Queues', 'CornellUniversity', request.json["_id"])
+    success = db.delete('Queues', 'Cornell_University', request.json["_id"])
     result = {"success": success}
     result["message"] = "Query successfully removed" if success else "Query unsuccessfully removed"
     return result
