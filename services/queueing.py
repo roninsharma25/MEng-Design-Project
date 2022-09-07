@@ -1,7 +1,6 @@
 from flask import *
+from constants import *
 import requests
-
-queueingPort = 5001
 
 app = Flask(__name__, static_url_path = '')
 
@@ -14,8 +13,8 @@ def testGet():
     return 'Queueing!'
 
 @app.route('/posting')
-def testQueuing():
-    response = requests.get('http://127.0.0.1:5000/test')
+def testPosting():
+    response = requests.get(f'http://127.0.0.1:{postingPort}/test')
     
     return response.text
 
