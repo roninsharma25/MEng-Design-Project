@@ -3,7 +3,6 @@
 # Authors: Ronin Sharma and Jude Javillo
 # Version: 14 February 2022
 
-from urllib import request
 from flask import *
 from services.storage import *
 from datetime import datetime
