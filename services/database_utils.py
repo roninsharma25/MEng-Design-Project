@@ -66,7 +66,6 @@ def patch(database, school, searchJSON, json, updateMultiple = False):
         collection = getCollection(database, school)
         
         if (updateMultiple):
-            print("IN1")
             collection.update_many(searchJSON, json)
         else:
             collection.update_one(searchJSON, {"$set": json}, upsert = True)

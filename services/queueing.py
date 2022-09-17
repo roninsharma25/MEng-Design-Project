@@ -25,7 +25,7 @@ def testPosting():
 def getAllQueueEntries():
     result = getAll('Queues', 'Cornell_University')
 
-    return {'result': str(result)}
+    return {'result': result}
 
 @app.route('/', methods = ['POST'])
 def createQueueEntry():
@@ -38,20 +38,33 @@ def createQueueEntry():
     # Set queue position
     postRequest['queuePosition'] = len(otherQueueEntries) + 1
 
+    # Set the assigned TA
+    postRequest['assignedTA'] = ''
+
     result = post('Queues', 'Cornell_University', postRequest)
 
     return {'result': result}
 
-# FIX THIS ENDPOINT
+@app.route('/updateQueueEntry', methods = ['PATCH'])
+def updateQueueEntry():
+    result = patch('Queues', 'Cornell_University', request.json['queueEntryDetails'], request.json['queueEntryModifications'])
+
+    return {'result': result}
+
 @app.route('/', methods = ['DELETE'])
 def removeQueueEntry():
     deleteRequest = request.json
-    result = delete('Queues', 'Cornell_University', deleteRequest)
+    
+    # Get the queue position of this entry
+    queuePosition = getOne('Queues', 'Cornell_University', deleteRequest)['queuePosition']
+
+    # Delete the queue entry
+    result1 = delete('Queues', 'Cornell_University', deleteRequest)
 
     # Decrement queue positions
-    patch('Queues', 'Cornell_University', {'class': deleteRequest['class']}, {'$inc': {'queuePosition': -1}}, True)
+    result2 = patch('Queues', 'Cornell_University', {'class': deleteRequest['class'], 'queuePosition': {'$gte': queuePosition}}, {'$inc': {'queuePosition': -1}}, True)
 
-    return {'result': result}
+    return {'result': result1 and result2}
 
 @app.route('/emptyQueue', methods = ['DELETE'])
 def emptyQueue():

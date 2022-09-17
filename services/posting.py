@@ -25,7 +25,7 @@ def testQueuing():
 def getAllPosts():
     result = getAll('Posts', 'Cornell_University')
 
-    return {'result': str(result)}
+    return {'result': result}
 
 @app.route('/', methods = ['POST'])
 def createPost():
@@ -42,6 +42,52 @@ def updatePost():
     patchRequest['timeUpdated'] = str(datetime.now())
     postDetails = patchRequest['postDetails']
     result = patch('Posts', 'Cornell_University', postDetails, patchRequest)
+
+    return {'result': result}
+
+@app.route('/addAnswerToPost', methods = ['PATCH'])
+def addAnswerToPost():
+    patchRequest = request.json
+    patchRequest['timeUpdated'] = str(datetime.now())
+    postDetails = patchRequest['postDetails']
+
+    # Get the list of current answers for the post
+    post = getOne('Posts', 'Cornell_University', postDetails)
+    answers = post['answers']
+
+    # Add the new answer to that list
+    answers.append(patchRequest['newAnswer'])
+    post['answers'] = answers
+
+    # Remove IDs
+    postDetails.pop('_id', None)
+    post.pop('_id', None)
+
+    # Submit the patch request
+    result = patch('Posts', 'Cornell_University', postDetails, post)
+
+    return {'result': result}
+
+@app.route('/updateAnswerToPost', methods = ['PATCH'])
+def updateAnswerToPost():
+    patchRequest = request.json
+    patchRequest['timeUpdated'] = str(datetime.now())
+    postDetails = patchRequest['postDetails']
+
+    # Get the list of current answers for the post
+    post = getOne('Posts', 'Cornell_University', postDetails)
+    answers = post['answers']
+
+    # Update the one answer
+    answers[answers.index(patchRequest['oldAnswer'])] = patchRequest['newAnswer']
+    post['answers'] = answers
+
+    # Remove IDs
+    postDetails.pop('_id', None)
+    post.pop('_id', None)
+
+    # Submit the patch request
+    result = patch('Posts', 'Cornell_University', postDetails, post)
 
     return {'result': result}
 
