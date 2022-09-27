@@ -11,13 +11,16 @@ app = Flask(__name__, static_url_path = '')
 def getAllUsers():
     result = getAll('Users', 'Cornell_University')
 
-    return {'result': result}
+    return jsonify({'result': result})
 
 @app.route('/oneUser', methods = ['GET'])
 def getUser():
-    user = getOne('Users', 'Cornell_University', request.json)
+    user = getOne('Users', 'Cornell_University', {'email': request.args.get('email')})
 
-    return {'result': user}
+    response = jsonify({'result': user})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 @app.route('/', methods = ['POST'])
 def createUser():
