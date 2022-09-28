@@ -9,8 +9,11 @@ import {
 } from "@mui/material"
 import PostPreview from "../components/PostPreview"
 import { BACKEND, SIDEBAR_WIDTH } from "../utils/constants"
+import { curveNatural } from "d3"
 
-export default function Posts() {
+export default function Posts({
+  user
+}) {
 
   const [index, setIndex] = useState(-1)
   const [posts_, setPosts] = useState([])
@@ -18,47 +21,88 @@ export default function Posts() {
   const [numTextChanges, setNumTextChanges] = useState(0)
 
   useEffect( () => {
-    fetch("/posts/all")
+    fetch("http://localhost:5000/all")
       .then(resp => resp.json())
       .then(resp => { 
         setPosts(resp.result)
-        console.log('RESULT')
-        console.log(resp.result)
       })
       .catch(err => console.log(err))
-      
-    console.log('ALL POSTS')
-    console.log(posts_);
   }, [numTextChanges])
 
   let patchRequest = {
     method: 'PATCH',
     headers: {'Content-Type': 'application/json'},
     body: {
-      '_id': '',
-      'class': '',
-      'email': '',
-      'answer': ''
+      'postDetails': {
+        'question': '',
+        'email': '',
+        'class': ''
+      },
+      'newAnswer': {
+        'answer': '',
+        'name': '',
+        'email': '',
+        'role': ''
+      }
     }
   }
+
+  console.log('USER')
+  console.log(user)
+  console.log(user.email)
+  console.log(user.displayName)
 
   function addAnswer() {
     if (text !== '') {
       let currentPost = posts_[index]
-      patchRequest['body']['_id'] = currentPost._id
-      patchRequest['body']['class'] = currentPost.class_
-      patchRequest['body']['email'] = currentPost.email // SHOULD BE OF THE USER INSTEAD
-      patchRequest['body']['answer'] = text
+      patchRequest['body']['postDetails']['question'] = currentPost.question
+      patchRequest['body']['postDetails']['email'] = currentPost.email //user.email -- USE THE POST CREATORS EMAIL FOR NOW
+      patchRequest['body']['postDetails']['class'] = currentPost.class_
+      patchRequest['body']['newAnswer']['answer'] = text
+      patchRequest['body']['newAnswer']['name'] = user.displayName
+      patchRequest['body']['newAnswer']['email'] = user.email
+      patchRequest['body']['newAnswer']['role'] = 'student' // UPDATE THIS
 
       patchRequest['body'] = JSON.stringify(patchRequest['body'])
 
-      fetch('/posts/addAnswerToPost', patchRequest)
+      fetch('/addAnswerToPost', patchRequest)
         .then(() => setNumTextChanges(numTextChanges + 1))
         .then(() => setText(''))
         .catch(err => console.log(err))
     }
   }
+
+  function editPost() {
+
+  }
+
+  function deletePost() {
+    
+  }
+
+  function editComment() {
+
+  }
+
+  function deleteComment() {
+    
+  }
+
+  const getName = async (email) => {
+    await fetch('http://localhost:5002/oneUser?email=' + email)
+      .then(resp => resp.json())
+      .then(resp => {
+        console.log('RESPONSE')
+        console.log(resp.result.name)
+        return resp.result.name
+      })
+  }
   
+  //let x = getName('Test1234@gmail.com');
+  //console.log('X')
+  //console.log(x)
+
+
   const sidebar = {
     width: SIDEBAR_WIDTH,
     maxHeight: "100%",
@@ -82,6 +126,7 @@ export default function Posts() {
       <CardContent>
         <h1>Question Title</h1>
         <h3>Author Name</h3>
+        <h5>Last Updated:</h5>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut 
             enim ad minim veniam, quis nostrud exercitation ullamco laboris 
@@ -121,34 +166,58 @@ export default function Posts() {
       </React.Fragment>
     );
 
-  const posts = [0, 1, 2, 3, 4, 5, 6]
+  const posts = [0, 1, 2]
   let previews
   let questions = []
-  let instructorAnswers = []
-  let studentAnswers = []
+  let answers = []
 
   if (posts_.length) {
-    previews = posts.map((elm, i) => <PostPreview index={i} setIndex={setIndex} selectedIndex={index} author={posts_[i].author.Name}
+    previews = posts.map((elm, i) => <PostPreview index={i} setIndex={setIndex} selectedIndex={index} author={posts_[i].email}
     title={posts_[i].question} />);
 
     questions = posts.map((elm, i) => 
       <React.Fragment>
         <CardContent>
           <h1>{posts_[i].question}</h1>
-          <h3>{posts_[i].author.Name}</h3>
-          <p>Question</p>
+          <h2>{posts_[i].name}</h2>
+          <h3>{posts_[i].email}</h3>
+          <h3>Role: {posts_[i].role}</h3>
+          <h5>Last Updated: {Date(posts_[i].timeUpdated)}</h5>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore 
+            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
+            occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, 
+            consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit 
+            in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in 
+            culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco 
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum 
+            dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt 
+            mollit anim id est laborum.</p>
+
+            <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={editPost}>Edit Post</Button>
+
+            <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={deletePost}>Delete Post</Button>
         </CardContent>
       </React.Fragment>
     )
 
     posts.forEach((elm, i) => {
-      instructorAnswers.push(posts_[i].instructorAnswers.map((elm) => 
-        <Card variant="outlined" style={listStyle}>{elm.content}</Card>
-        )
-      )
+      answers.push(posts_[i].answers.map((elm) => 
+        <React.Fragment>
+        <CardContent>
+        
+        <h3>{elm.name}</h3>
+        <h3>{elm.email}</h3>
+        <h3>Role: {elm.role}</h3>
+        <p>{elm.answer}</p>
 
-      studentAnswers.push(posts_[i].studentAnswers.map((elm) => 
-        <Card variant="outlined" style={listStyle}>{elm.content}</Card>
+        <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={editComment}>Edit Comment</Button>
+        <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={deleteComment}>Delete Comment</Button>
+        </CardContent>
+        </React.Fragment>
+
         )
       )
     })
@@ -157,20 +226,12 @@ export default function Posts() {
     previews = posts.map((elm, i) => <PostPreview index={i} setIndex={setIndex} selectedIndex={index} />)
     posts.forEach(() => questions.push(question))
     posts.forEach(() => {
-      instructorAnswers.push(comment)
-      studentAnswers.push(comment)
+      answers.push(comment)
     })
   }
 
-
-  console.log('CURRENT RUN')
-  console.log(posts_)
-  
   if (index !== -1) {
     let currentPost = posts_[index]
-    console.log(currentPost._id)
-    console.log(currentPost.class_)
-    console.log(currentPost.email)
   }
 
   return (
@@ -181,12 +242,10 @@ export default function Posts() {
           </div>
           <div id="content" style={content}>
               <Card variant="outlined" style={listStyle}>{(index === -1) ? question : questions[index]}</Card>
+
               <br/>
               <h1 style={listStyle}>Comments</h1>
-              { (index === -1) ? <Card variant="outlined" style={listStyle}>{comment}</Card> : instructorAnswers[index] }
-              { (index === -1) ? <Card variant="outlined" style={listStyle}>{comment}</Card> : studentAnswers[index] }
-              {/* <Card variant="outlined" style={listStyle}>{comment}</Card>
-              <Card variant="outlined" style={listStyle}>{comment}</Card> */}
+              { (index === -1) ? <Card variant="outlined" style={listStyle}>{comment}</Card> : answers[index] }
               <TextField style={listStyle} value={text} onChange={(e) => setText(e.target.value)}
                 id="outlined-multiline-static"
                 label="Leave a comment"

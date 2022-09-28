@@ -56,6 +56,7 @@ def updatePost():
 
 @app.route('/addAnswerToPost', methods = ['PATCH'])
 def addAnswerToPost():
+    print(request.json)
     patchRequest = request.json
     patchRequest['timeUpdated'] = str(datetime.now())
     postDetails = patchRequest['postDetails']
@@ -76,7 +77,7 @@ def addAnswerToPost():
     result = patch('Posts', 'Cornell_University', postDetails, post)
 
     response = jsonify({'result': result})
-    response.headers.add('Access-Control-Allow-Origin', '*')
+    #response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
 
@@ -91,7 +92,11 @@ def updateAnswerToPost():
     answers = post['answers']
 
     # Update the one answer
-    answers[answers.index(patchRequest['oldAnswer'])] = patchRequest['newAnswer']
+    for answer in answers:
+        if answer['answer'] == patchRequest['oldAnswer']:
+            answers[answers.index(answer)]['answer'] = patchRequest['newAnswer']
+            break
+
     post['answers'] = answers
 
     # Remove IDs

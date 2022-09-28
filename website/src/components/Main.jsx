@@ -53,6 +53,9 @@ export default function Main({
         }
     }, [user])
 
+    console.log('MAIN USER')
+    console.log(user.email)
+
     return (
         <Router>
             <div>
@@ -62,7 +65,7 @@ export default function Main({
                         <Route path="/instructor" element={<TAQueues/>} />
                         <Route path="/settings" element={<Settings />}/>
                         <Route path="/account" element={<Account />}/>
-                        <Route path="/posts" element={<Posts />}/>
+                        <Route path="/posts" element={<Posts user={user} />}/>
                         <Route path="/queues" element={<Queues user={user} />}/>
                         <Route path="/" element={<Posts />}/>
                     </Routes>
