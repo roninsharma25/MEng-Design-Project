@@ -25,7 +25,10 @@ def testQueuing():
 def getAllPosts():
     result = getAll('Posts', 'Cornell_University')
 
-    return {'result': result}
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 @app.route('/', methods = ['POST'])
 def createPost():
@@ -34,7 +37,10 @@ def createPost():
     postRequest['answers'] = []
     result = post('Posts', 'Cornell_University', postRequest)
 
-    return {'result': result}
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 @app.route('/', methods = ['PATCH'])
 def updatePost():
@@ -43,7 +49,10 @@ def updatePost():
     postDetails = patchRequest['postDetails']
     result = patch('Posts', 'Cornell_University', postDetails, patchRequest)
 
-    return {'result': result}
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 @app.route('/addAnswerToPost', methods = ['PATCH'])
 def addAnswerToPost():
@@ -66,7 +75,10 @@ def addAnswerToPost():
     # Submit the patch request
     result = patch('Posts', 'Cornell_University', postDetails, post)
 
-    return {'result': result}
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 @app.route('/updateAnswerToPost', methods = ['PATCH'])
 def updateAnswerToPost():
@@ -89,14 +101,20 @@ def updateAnswerToPost():
     # Submit the patch request
     result = patch('Posts', 'Cornell_University', postDetails, post)
 
-    return {'result': result}
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 @app.route('/', methods = ['DELETE'])
 def deletePost():
     deleteRequest = request.json
     result = delete('Posts', 'Cornell_University', deleteRequest)
 
-    return {'result': result}
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=postingPort)
