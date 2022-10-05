@@ -29,26 +29,26 @@ export default function Queues({
     }
 
     useEffect( () => {
-        fetch("/queues/getQueueDatabase?queueID=0")
+        fetch("http://localhost:5000/queues/getQueueDatabase?queueID=0")
             .then(resp => resp.json())
             .then(resp => setQueueEntries(resp.data.queue))
             .catch(err => console.log(err))
     }, [queueChanges])
 
     function joinQueue() {
-        fetch("/queues/addQueueEntryDatabase?queueID=0", postRequest)
+        fetch("http://localhost:5000/queues/addQueueEntryDatabase?queueID=0", postRequest)
             .then(() => setQueueChanges(queueChanges + 1))
             .catch(err => console.log(err))   
     }
 
     function clearQueue() {
-        fetch("/queues/createQueueDatabase?queueID=0", postRequest)
+        fetch("http://localhost:5000/queues/createQueueDatabase?queueID=0", postRequest)
             .then(() => setQueueChanges(queueChanges + 1))
             .catch(err => console.log(err))   
     }
 
     function removeQueueEntry() {
-        fetch("/queues/removeQueueEntryDatabase?queueID=0?entryID=0", postRequest)
+        fetch("http://localhost:5000/queues/removeQueueEntryDatabase?queueID=0?entryID=0", postRequest)
             .then(() => setQueueChanges(queueChanges + 1))
             .catch(err => console.log(err))  
     }

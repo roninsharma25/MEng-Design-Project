@@ -30,9 +30,16 @@ export default function Welcome({
     function goToLogin() {
         navigate("./login")
     }
+
+    const containerStyle = {
+        ...CENTER_CONTENT,
+        ...CENTER_VERTICAL,
+        ...CENTER_HORTIZONTAL,
+        ...ROUNDED_CONTAINER,
+    }
     
     return (
-        <div style={centerStyle}>
+        <div style={containerStyle}>
             <h1>Welcome to Help Me Out</h1>
             <Button variant="contained" onClick={goToSignup}>Signup</Button>
             <br/>

@@ -72,6 +72,15 @@ export default function Posts({
     }
   }
 
+  function getFilteredPosts(value) {
+    fetch(`http://localhost:5000/some?criteria=question&value=${value}`)
+    .then(resp => resp.json())
+    .then(resp => { 
+      setPosts(resp.result)
+    })
+    .catch(err => console.log(err))
+  }
+
   function editPost() {
 
   }
@@ -166,23 +175,24 @@ export default function Posts({
       </React.Fragment>
     );
 
-  const posts = [0, 1, 2]
+  let posts = [0, 1, 2];
   let previews
   let questions = []
   let answers = []
 
   if (posts_.length) {
+    posts = [...posts_];
     previews = posts.map((elm, i) => <PostPreview index={i} setIndex={setIndex} selectedIndex={index} author={posts_[i].email}
     title={posts_[i].question} />);
 
-    questions = posts.map((elm, i) => 
+    questions = posts.map((elm, i) =>    
       <React.Fragment>
         <CardContent>
           <h1>{posts_[i].question}</h1>
           <h2>{posts_[i].name}</h2>
           <h3>{posts_[i].email}</h3>
           <h3>Role: {posts_[i].role}</h3>
-          <h5>Last Updated: {Date(posts_[i].timeUpdated)}</h5>
+          <h5>Last Updated: {Date(posts_[i].timeUpdated)} </h5>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore 
             magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
             Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
@@ -206,7 +216,7 @@ export default function Posts({
     posts.forEach((elm, i) => {
       answers.push(posts_[i].answers.map((elm) => 
         <React.Fragment>
-        <CardContent>
+        <CardContent style={{ border: "1px solid blue", marginTop: "25px", marginLeft: "25px", marginRight: "25px" }}>
         
         <h3>{elm.name}</h3>
         <h3>{elm.email}</h3>
@@ -217,7 +227,6 @@ export default function Posts({
         <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={deleteComment}>Delete Comment</Button>
         </CardContent>
         </React.Fragment>
-
         )
       )
     })
@@ -237,7 +246,8 @@ export default function Posts({
   return (
       <div style={{display: "flex"}}>
           <div id="sidebar" style={sidebar}>
-              <TextField id="outlined-search" label="Search field" type="search" style={listStyle}/>
+              <TextField id="outlined-search" label="Search field" type="search" style={listStyle}
+              onBlur={(e) => getFilteredPosts(e.target.value)} />
               { previews }
           </div>
           <div id="content" style={content}>
