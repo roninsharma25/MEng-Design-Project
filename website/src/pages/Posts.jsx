@@ -19,6 +19,9 @@ export default function Posts({
   const [posts_, setPosts] = useState([])
   const [text, setText] = useState("")
   const [numTextChanges, setNumTextChanges] = useState(0)
+  const [editCommentText, setEditCommentText] = useState("Edit Comment")
+  const [commentStateMatrix, setCommentStateMatrix] = useState(Array.from({length: 10},()=> Array.from({length: 10}, () => "Edit Comment")));
+  const [commentValueMatrix, setCommentValueMatrix] = useState(Array.from({length: 10},()=> Array.from({length: 10}, () => "")));
 
   useEffect( () => {
     fetch("http://localhost:5000/all")
@@ -29,32 +32,36 @@ export default function Posts({
       .catch(err => console.log(err))
   }, [numTextChanges])
 
-  let patchRequest = {
-    method: 'PATCH',
-    headers: {'Content-Type': 'application/json'},
-    body: {
-      'postDetails': {
-        'question': '',
-        'email': '',
-        'class': ''
-      },
-      'newAnswer': {
-        'answer': '',
-        'name': '',
-        'email': '',
-        'role': ''
-      }
-    }
-  }
 
-  console.log('USER')
-  console.log(user)
-  console.log(user.email)
-  console.log(user.displayName)
+
+  // console.log('USER')
+  // console.log(user)
+  // console.log(user.email)
+  // console.log(user.displayName)
 
   function addAnswer() {
     if (text !== '') {
-      let currentPost = posts_[index]
+      let currentPost = posts_[index];
+      let patchRequest = {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: {
+          'postDetails': {
+            'question': '',
+            'email': '',
+            'class': ''
+          },
+          'newAnswer': {
+            'answer': '',
+            'name': '',
+            'email': '',
+            'role': ''
+          }
+        }
+      }
+
+      console.log('CURRENT POST')
+      console.log(currentPost)
       patchRequest['body']['postDetails']['question'] = currentPost.question
       patchRequest['body']['postDetails']['email'] = currentPost.email //user.email -- USE THE POST CREATORS EMAIL FOR NOW
       patchRequest['body']['postDetails']['class'] = currentPost.class_
@@ -72,8 +79,35 @@ export default function Posts({
     }
   }
 
+  function updateAnswer(oldAnswer, newAnswer) {
+    let currentPost = posts_[index]
+    let patchRequestUpdateAnswer = {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: {
+        'postDetails': {},
+        'oldAnswer': '',
+        'newAnswer': ''
+      }
+    }
+    patchRequestUpdateAnswer['body']['postDetails']['question'] = currentPost.question
+    patchRequestUpdateAnswer['body']['postDetails']['email'] = currentPost.email
+    patchRequestUpdateAnswer['body']['postDetails']['name'] = currentPost.name
+    patchRequestUpdateAnswer['body']['oldAnswer'] = oldAnswer
+    patchRequestUpdateAnswer['body']['newAnswer'] = newAnswer
+
+    console.log('REQUEST')
+    console.log(patchRequestUpdateAnswer)
+    patchRequestUpdateAnswer['body'] = JSON.stringify(patchRequestUpdateAnswer['body'])
+
+    fetch('/updateAnswerToPost', patchRequestUpdateAnswer)
+      .then(() => setNumTextChanges(numTextChanges + 1)) // used to reload the answers
+      .catch(err => console.log(err))
+
+  }
+
   function getFilteredPosts(value) {
-    fetch(`http://localhost:5000/some?criteria=question&value=${value}`)
+    fetch(`http://localhost:5000/some?criteria=question&value=${value}`) // only filter by the question field for now
     .then(resp => resp.json())
     .then(resp => { 
       setPosts(resp.result)
@@ -89,8 +123,26 @@ export default function Posts({
     
   }
 
-  function editComment() {
+  function editComment(i, j, event, postInformation) {
+    console.log('INFO')
+    console.log(postInformation)
+    let commentStateMatrixCopy = [...commentStateMatrix];
+    if (commentStateMatrixCopy[i][j] === "Edit Comment") {
+      commentStateMatrixCopy[i][j] = "Update Comment" 
+    } else {
+      commentStateMatrixCopy[i][j] = "Edit Comment";
+      
+      let oldAnswer = postInformation.answers[j].answer;
+      let newAnswer = commentValueMatrix[i][j];
+      updateAnswer(oldAnswer, newAnswer)
+    }
+    setCommentStateMatrix(commentStateMatrixCopy);    
+  }
 
+  function updateCommentValueMatrix(i, j, value) {
+    let commentValueMatrixCopy = [...commentValueMatrix];
+    commentValueMatrixCopy[i][j] = value;
+    setCommentValueMatrix(commentValueMatrixCopy);
   }
 
   function deleteComment() {
@@ -176,9 +228,10 @@ export default function Posts({
     );
 
   let posts = [0, 1, 2];
-  let previews
-  let questions = []
-  let answers = []
+  let commentState = [];
+  let previews;
+  let questions = [];
+  let answers = [];
 
   if (posts_.length) {
     posts = [...posts_];
@@ -213,17 +266,20 @@ export default function Posts({
       </React.Fragment>
     )
 
+    commentState = [];
     posts.forEach((elm, i) => {
-      answers.push(posts_[i].answers.map((elm) => 
+      commentState.push(Array(posts_[i].answers.length).fill('Edit Comment'));
+      answers.push(posts_[i].answers.map((elm, j) => 
         <React.Fragment>
         <CardContent style={{ border: "1px solid blue", marginTop: "25px", marginLeft: "25px", marginRight: "25px" }}>
         
         <h3>{elm.name}</h3>
         <h3>{elm.email}</h3>
         <h3>Role: {elm.role}</h3>
-        <p>{elm.answer}</p>
 
-        <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={editComment}>Edit Comment</Button>
+
+        { (commentStateMatrix[i][j] === "Edit Comment") ? <p>{elm.answer}</p> : <TextField defaultValue={elm.answer} onChange={(e) => updateCommentValueMatrix(i, j, e.target.value)}></TextField> }
+        <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={ (e) => editComment(i, j, e, posts_[i]) }>{commentStateMatrix[i][j]}</Button>
         <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={deleteComment}>Delete Comment</Button>
         </CardContent>
         </React.Fragment>
@@ -242,6 +298,9 @@ export default function Posts({
   if (index !== -1) {
     let currentPost = posts_[index]
   }
+
+  console.log('MATRIX')
+  console.log(commentValueMatrix)
 
   return (
       <div style={{display: "flex"}}>
