@@ -22,6 +22,10 @@ export default function Posts({
   const [editCommentText, setEditCommentText] = useState("Edit Comment")
   const [commentStateMatrix, setCommentStateMatrix] = useState(Array.from({length: 10},()=> Array.from({length: 10}, () => "Edit Comment")));
   const [commentValueMatrix, setCommentValueMatrix] = useState(Array.from({length: 10},()=> Array.from({length: 10}, () => "")));
+  const [creatingPost, setCreatingPost] = useState(false)
+  const [creatingPostQuestionTitle, setCreatingPostQuestionTitle] = useState('')
+  const [creatingPostQuestionBody, setCreatingPostQuestionBody] = useState('')
+
 
   useEffect( () => {
     fetch("http://localhost:5000/all")
@@ -103,7 +107,32 @@ export default function Posts({
     fetch('/updateAnswerToPost', patchRequestUpdateAnswer)
       .then(() => setNumTextChanges(numTextChanges + 1)) // used to reload the answers
       .catch(err => console.log(err))
+  }
 
+  function addNewPostToDatabase(questionTitle, questionBody) {
+    let newPostDetails = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: {
+        'question': '',
+        'email': '',
+        'role': '',
+        'class': '',
+        'name': '',
+
+      }
+    }
+    newPostDetails['body']['question'] = questionBody
+    newPostDetails['body']['email'] = 'test@gmail' // hard-coded for now
+    newPostDetails['body']['role'] = 'student' // hard-coded for now
+    newPostDetails['body']['class'] = 'JAM 1110' // hard-coded for now
+    newPostDetails['body']['name'] = user.displayName
+
+    newPostDetails['body'] = JSON.stringify(newPostDetails['body'])
+
+    fetch('/', newPostDetails)
+      .then(() => setNumTextChanges(numTextChanges + 1)) // used to reload the answers
+      .catch(err => console.log(err))
   }
 
   function getFilteredPosts(value) {
@@ -113,6 +142,17 @@ export default function Posts({
       setPosts(resp.result)
     })
     .catch(err => console.log(err))
+  }
+
+  function newPost() {
+    setCreatingPost(true);
+  }
+
+  function createPost() {
+    console.log(creatingPostQuestionTitle)
+    console.log(creatingPostQuestionBody)
+    addNewPostToDatabase(creatingPostQuestionTitle, creatingPostQuestionBody)
+    setCreatingPost(false)
   }
 
   function editPost() {
@@ -180,6 +220,27 @@ export default function Posts({
   const listStyle = {
       width:"98%", 
       margin:"1%"
+  }
+
+  const searchFieldStyle = {
+    width:"50%", 
+    margin:"1%"
+  }
+
+  const newPostStyle = {
+    width:"40%",
+    margin:"1%",
+    top:"10px",
+    left:"5px"
+  }
+
+  const questionTitleStyle = {
+    width:"500px"
+  }
+
+  const questionBodyStyle = {
+    width:"200%",
+    height:"200%"
   }
 
   const question = (
@@ -302,31 +363,52 @@ export default function Posts({
   console.log('MATRIX')
   console.log(commentValueMatrix)
 
-  return (
-      <div style={{display: "flex"}}>
-          <div id="sidebar" style={sidebar}>
-              <TextField id="outlined-search" label="Search field" type="search" style={listStyle}
-              onBlur={(e) => getFilteredPosts(e.target.value)} />
-              { previews }
-          </div>
-          <div id="content" style={content}>
-              <Card variant="outlined" style={listStyle}>{(index === -1) ? question : questions[index]}</Card>
+  if (!creatingPost) {
+    return (
+        <div style={{display: "flex"}}>
+            <div id="sidebar" style={sidebar}>
+                <TextField id="outlined-search" label="Search field" type="search" style={searchFieldStyle}
+                onBlur={(e) => getFilteredPosts(e.target.value)} />
+                <Button variant="contained" style={newPostStyle} onClick={newPost}>New Post</Button>
+                { previews }
+            </div>
+            <div id="content" style={content}>
+                <Card variant="outlined" style={listStyle}>{(index === -1) ? question : questions[index]}</Card>
 
-              <br/>
-              <h1 style={listStyle}>Comments</h1>
-              { (index === -1) ? <Card variant="outlined" style={listStyle}>{comment}</Card> : answers[index] }
-              <TextField style={listStyle} value={text} onChange={(e) => setText(e.target.value)}
-                id="outlined-multiline-static"
-                label="Leave a comment"
-                multiline
-                rows={4}
-                defaultValue=""
-              />
-              <div style={{ textAlign: "right" }}>
-                <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={addAnswer}>Post Comment</Button>
-              </div>
-              <div style={{ height: 100 }} /> 
-          </div>
+                <br/>
+                <h1 style={listStyle}>Comments</h1>
+                { (index === -1) ? <Card variant="outlined" style={listStyle}>{comment}</Card> : answers[index] }
+                <TextField style={listStyle} value={text} onChange={(e) => setText(e.target.value)}
+                  id="outlined-multiline-static"
+                  label="Leave a comment"
+                  multiline
+                  rows={4}
+                  defaultValue=""
+                />
+                <div style={{ textAlign: "right" }}>
+                  <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={addAnswer}>Post Comment</Button>
+                </div>
+                <div style={{ height: 100 }} /> 
+            </div>
+        </div>
+    )
+  } else {
+    return (
+      <div>
+        <React.Fragment>
+        <CardContent>
+          <TextField id="outlined-search" label="Question Title" type="search" style={questionTitleStyle} 
+          onChange={(e) => setCreatingPostQuestionTitle(e.target.value)}/>
+          <br></br>
+          <br></br>
+          <TextField id="outlined-search" label="Question Body" type="search" multiline rows={5} style={questionBodyStyle}
+          onChange={(e) => setCreatingPostQuestionBody(e.target.value)}/>
+          <br></br>
+          <br></br>
+          <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={createPost}>Create Post</Button>
+        </CardContent>
+        </React.Fragment>
       </div>
-  )
+    )
+  } 
 }
