@@ -115,6 +115,7 @@ export default function Posts({
       headers: {'Content-Type': 'application/json'},
       body: {
         'question': '',
+        'questionBody': '',
         'email': '',
         'role': '',
         'class': '',
@@ -122,7 +123,9 @@ export default function Posts({
 
       }
     }
-    newPostDetails['body']['question'] = questionBody
+    
+    newPostDetails['body']['question'] = questionTitle
+    newPostDetails['body']['questionBody'] = questionBody
     newPostDetails['body']['email'] = 'test@gmail' // hard-coded for now
     newPostDetails['body']['role'] = 'student' // hard-coded for now
     newPostDetails['body']['class'] = 'JAM 1110' // hard-coded for now
@@ -307,22 +310,11 @@ export default function Posts({
           <h3>{posts_[i].email}</h3>
           <h3>Role: {posts_[i].role}</h3>
           <h5>Last Updated: {Date(posts_[i].timeUpdated)} </h5>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore 
-            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
-            occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, 
-            consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit 
-            in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in 
-            culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco 
-            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum 
-            dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt 
-            mollit anim id est laborum.</p>
+          <p>{posts_[i].questionBody}</p>
 
-            <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={editPost}>Edit Post</Button>
+          <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={editPost}>Edit Post</Button>
 
-            <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={deletePost}>Delete Post</Button>
+          <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={deletePost}>Delete Post</Button>
         </CardContent>
       </React.Fragment>
     )
