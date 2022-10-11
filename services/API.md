@@ -13,6 +13,7 @@
       ```json
       {
         "question": "",
+        "questionBody": "",
         "email": "",
         "role": "",
         "class": "",
