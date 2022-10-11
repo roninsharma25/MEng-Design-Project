@@ -3,7 +3,9 @@ import { Button } from "@mui/material"
 import { POST_PREVIEW_HEIGHT, SELECTION_BORDER_WIDTH, SIDEBAR_WIDTH } from "../utils/constants"
 import { FILL_GRADIENT } from "../utils/styles";
 
-export default function TAQueuePreview() {
+export default function TAQueuePreview({
+    name
+}) {
 
     // STYLES ******************************************************************
 
@@ -36,7 +38,7 @@ export default function TAQueuePreview() {
     return (
         <div style={unselectedStyle}>
             <div style={contentStyle}>
-                <h3 style={{padding: 10, margin:0}}>Student Name</h3>
+                <h3 style={{padding: 10, margin:0}}>{name}</h3>
                 <p style={{padding: 10, margin:0}}>Question Description goes here</p>
                 <Button variant="contained" style={{marginLeft: 10}}>Assign to me</Button>
                 <Button variant="text" style={{marginLeft: 10}}>Mark as Inactive</Button>

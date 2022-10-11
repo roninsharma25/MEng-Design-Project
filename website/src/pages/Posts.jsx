@@ -38,10 +38,10 @@ export default function Posts({
 
 
 
-  // console.log('USER')
-  // console.log(user)
-  // console.log(user.email)
-  // console.log(user.displayName)
+  console.log('USER')
+  console.log(user)
+  console.log(user.email)
+  console.log(user.displayName)
 
   function addAnswer() {
     if (text !== '') {

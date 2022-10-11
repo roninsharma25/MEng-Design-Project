@@ -25,7 +25,10 @@ def testPosting():
 def getAllQueueEntries():
     result = getAll('Queues', 'Cornell_University')
 
-    return {'result': result}
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 @app.route('/', methods = ['POST'])
 def createQueueEntry():

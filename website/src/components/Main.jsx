@@ -9,6 +9,7 @@ import Navigation from './Navigation'
 import Home from './Home'
 import Settings from './Settings'
 import Account from './Account'
+import JoinQueue from './JoinQueue'
 import Posts from '../pages/Posts'
 import Queues from '../pages/Queues'
 import TAQueues from '../pages/TAQueues'
@@ -43,18 +44,15 @@ export default function Main({
         window.addEventListener('resize', handleResize)
     })
 
-    useEffect( () => {
-        if (user.email) {
-            fetch(`/users/one?email=${user.email}`)
-            .then(resp => resp.json())
-            .then(resp => {
-                setUserInfo(resp)})
-            .catch(err => console.log(err))
-        }
-    }, [user])
-
-    console.log('MAIN USER')
-    console.log(user.email)
+    // useEffect( () => {
+    //     if (user.email) {
+    //         fetch(`/users/one?email=${user.email}`)
+    //         .then(resp => resp.json())
+    //         .then(resp => {
+    //             setUserInfo(resp)})
+    //         .catch(err => console.log(err))
+    //     }
+    // }, [user])
 
     return (
         <Router>
@@ -67,6 +65,7 @@ export default function Main({
                         <Route path="/account" element={<Account />}/>
                         <Route path="/posts" element={<Posts user={user} />}/>
                         <Route path="/queues" element={<Queues user={user} />}/>
+                        <Route path="/joinQueue" element={<JoinQueue user={user} />}/>
                         <Route path="/" element={<Posts />}/>
                     </Routes>
                 </div>

@@ -22,6 +22,7 @@ export default function Queues({
     const navigate = useNavigate();
     const goToTAQueues = () => navigate("/instructor")
     const goToStudentQueues = () => navigate("/students")
+    const joinQueue = () => navigate("/joinQueue")
     
     const postRequest = {
         method: 'POST',
@@ -35,11 +36,11 @@ export default function Queues({
             .catch(err => console.log(err))
     }, [queueChanges])
 
-    function joinQueue() {
-        fetch("http://localhost:5000/queues/addQueueEntryDatabase?queueID=0", postRequest)
-            .then(() => setQueueChanges(queueChanges + 1))
-            .catch(err => console.log(err))   
-    }
+    // function joinQueue() {
+    //     fetch("http://localhost:5000/queues/addQueueEntryDatabase?queueID=0", postRequest)
+    //         .then(() => setQueueChanges(queueChanges + 1))
+    //         .catch(err => console.log(err))   
+    // }
 
     function clearQueue() {
         fetch("http://localhost:5000/queues/createQueueDatabase?queueID=0", postRequest)
@@ -67,7 +68,7 @@ export default function Queues({
             <h2>PROFESSOR'S OH (4PM - 6PM)</h2>
             <h3># Students ahead: 0</h3>
             <h3>Average wait time: 5 minutes</h3>
-            <Button variant="contained" onClick={joinQueue}>Join Queue!</Button>
+            <Button variant="contained" onClick={joinQueue}>View Queue!</Button>
             <br></br>
             <br></br>
             <Button variant="contained" onClick={clearQueue}>Clear Queue!</Button>
@@ -103,7 +104,6 @@ export default function Queues({
 
     return (
         <div style={{display: "flex"}}>
-            {/* User email: {user.email} */}
             <Card variant="outlined" style={listStyle}>{prof}</Card>
             <Card variant="outlined" style={listStyle}>{ta}</Card>
             <Card variant="outlined" style={listStyle}>{student}</Card>

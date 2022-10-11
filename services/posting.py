@@ -4,6 +4,7 @@ from datetime import datetime
 from database_utils import *
 
 import requests
+import json
 
 app = Flask(__name__, static_url_path = '')
 
@@ -20,6 +21,13 @@ def testQueuing():
     response = requests.get(f'http://127.0.0.1:{queueingPort}/test')
     
     return response.text
+
+@app.route('/queueing/all')
+def getAllQueueEntries():
+    response = jsonify(json.loads(requests.get(f'http://127.0.0.1:{queueingPort}/all').text))
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 @app.route('/all', methods = ['GET'])
 def getAllPosts():

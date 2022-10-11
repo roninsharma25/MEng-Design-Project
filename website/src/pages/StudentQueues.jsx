@@ -14,6 +14,8 @@ import TAQueuePreview from "../components/TAQueuePreview"
 
 export default function StudentQueues() {
 
+  const [entries, setEntries] = useState([])
+
   const container = {
     width: "100%",
     height: "auto",
@@ -32,9 +34,21 @@ export default function StudentQueues() {
       margin:"auto"
   }
 
-  
-  const entries = [0]
-  const queue = entries.map(() => <TAQueuePreview/>)
+  useEffect( () => {
+    fetch("http://localhost:5000/queueing/all")
+    .then(resp => resp.json())
+    .then(resp => { 
+      setEntries(resp.result)
+      console.log(resp)
+      console.log(resp)
+    })
+    .catch(err => console.log(err))
+  }, [])
+
+  console.log('QUEUE ENTRIES')
+  console.log(entries)
+
+  const queue = entries.map((e) => <TAQueuePreview name={e.email}/>)
 
   return (
     <div style={container}>
