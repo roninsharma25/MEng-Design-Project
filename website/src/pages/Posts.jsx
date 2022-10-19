@@ -22,6 +22,9 @@ export default function Posts({
   const [editCommentText, setEditCommentText] = useState("Edit Comment")
   const [commentStateMatrix, setCommentStateMatrix] = useState(Array.from({length: 10},()=> Array.from({length: 10}, () => "Edit Comment")));
   const [commentValueMatrix, setCommentValueMatrix] = useState(Array.from({length: 10},()=> Array.from({length: 10}, () => "")));
+  const [editPostText, setEditPostText] = useState("Edit Post")
+  const [postContent, setPostContent] = useState("")
+  
   const [creatingPost, setCreatingPost] = useState(false)
   const [creatingPostQuestionTitle, setCreatingPostQuestionTitle] = useState('')
   const [creatingPostQuestionBody, setCreatingPostQuestionBody] = useState('')
@@ -64,8 +67,6 @@ export default function Posts({
         }
       }
 
-      console.log('CURRENT POST')
-      console.log(currentPost)
       patchRequest['body']['postDetails']['question'] = currentPost.question
       patchRequest['body']['postDetails']['email'] = currentPost.email //user.email -- USE THE POST CREATORS EMAIL FOR NOW
       patchRequest['body']['postDetails']['class'] = currentPost.class_
@@ -100,8 +101,6 @@ export default function Posts({
     patchRequestUpdateAnswer['body']['oldAnswer'] = oldAnswer
     patchRequestUpdateAnswer['body']['newAnswer'] = newAnswer
 
-    console.log('REQUEST')
-    console.log(patchRequestUpdateAnswer)
     patchRequestUpdateAnswer['body'] = JSON.stringify(patchRequestUpdateAnswer['body'])
 
     fetch('/updateAnswerToPost', patchRequestUpdateAnswer)
@@ -152,23 +151,64 @@ export default function Posts({
   }
 
   function createPost() {
-    console.log(creatingPostQuestionTitle)
-    console.log(creatingPostQuestionBody)
     addNewPostToDatabase(creatingPostQuestionTitle, creatingPostQuestionBody)
     setCreatingPost(false)
   }
 
   function editPost() {
+    if (editPostText === 'Edit Post') {
+      setEditPostText('Update Post')
+    } else {
+      setEditPostText('Edit Post')
+      let currentPost = posts_[index]
+      let patchRequestUpdatePostContent = {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: {
+          'postDetails': {
+            'class': currentPost.class,
+            'email': currentPost.email,
+            'question': currentPost.question,
+            'questionBody': currentPost.questionBody
+          },
+          'questionBody': postContent
+        }
+      }
 
+      patchRequestUpdatePostContent['body'] = JSON.stringify(patchRequestUpdatePostContent['body'])
+
+      fetch('/', patchRequestUpdatePostContent)
+        .then(() => setNumTextChanges(numTextChanges + 1)) // used to reload the answers
+        .catch(err => console.log(err))
+    }
+      
   }
 
   function deletePost() {
+
+    let currentPost = posts_[index]
+    let deletePostRequest = {
+      method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+      body: {
+        'class': currentPost.class,
+        'email': currentPost.email,
+        'question': currentPost.question,
+        'questionBody': currentPost.questionBody
+      }
+    }
+    
+    deletePostRequest['body'] = JSON.stringify(deletePostRequest['body'])
+    
+    fetch('/', deletePostRequest)
+      .then(() => setNumTextChanges(numTextChanges + 1)) // used to reload the answers
+      .catch(err => console.log(err))
+    
+    setIndex(-1)
     
   }
 
   function editComment(i, j, event, postInformation) {
-    console.log('INFO')
-    console.log(postInformation)
     let commentStateMatrixCopy = [...commentStateMatrix];
     if (commentStateMatrixCopy[i][j] === "Edit Comment") {
       commentStateMatrixCopy[i][j] = "Update Comment" 
@@ -192,25 +232,20 @@ export default function Posts({
     
   }
 
+  const goBackToPosts = () => setCreatingPost(false)
+
   const getName = async (email) => {
     await fetch('http://localhost:5002/oneUser?email=' + email)
       .then(resp => resp.json())
       .then(resp => {
-        console.log('RESPONSE')
-        console.log(resp.result.name)
         return resp.result.name
       })
   }
   
-  //let x = getName('Test1234@gmail.com');
-  //console.log('X')
-  //console.log(x)
-
-
   const sidebar = {
     width: SIDEBAR_WIDTH,
     maxHeight: "100%",
-    overflowY: "scroll"
+    overflowY: "scroll",
   }
 
   const content = {
@@ -234,7 +269,8 @@ export default function Posts({
     width:"40%",
     margin:"1%",
     top:"10px",
-    left:"5px"
+    left:"5px",
+    height:"5%"
   }
 
   const questionTitleStyle = {
@@ -243,6 +279,11 @@ export default function Posts({
 
   const questionBodyStyle = {
     width:"200%",
+    height:"200%"
+  }
+
+  const postBodyStyle = {
+    width:"100%",
     height:"200%"
   }
 
@@ -310,9 +351,14 @@ export default function Posts({
           <h3>{posts_[i].email}</h3>
           <h3>Role: {posts_[i].role}</h3>
           <h5>Last Updated: {Date(posts_[i].timeUpdated)} </h5>
-          <p>{posts_[i].questionBody}</p>
 
-          <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={editPost}>Edit Post</Button>
+          { (editPostText === "Edit Post") ? <p>{posts_[i].questionBody}</p> : <TextField style = {postBodyStyle} defaultValue={posts_[i].questionBody}
+          multiline rows={5} onChange={(e) => setPostContent(e.target.value)}></TextField> }
+          <br></br>
+          <br></br>
+          {/* onChange={(e) => updateCommentValueMatrix(i, j, e.target.value)}></TextField> } */}
+
+          <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={editPost}>{editPostText}</Button>
 
           <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={deletePost}>Delete Post</Button>
         </CardContent>
@@ -351,9 +397,6 @@ export default function Posts({
   if (index !== -1) {
     let currentPost = posts_[index]
   }
-
-  console.log('MATRIX')
-  console.log(commentValueMatrix)
 
   if (!creatingPost) {
     return (
@@ -398,6 +441,7 @@ export default function Posts({
           <br></br>
           <br></br>
           <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={createPost}>Create Post</Button>
+          <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={goBackToPosts}>Back</Button>
         </CardContent>
         </React.Fragment>
       </div>

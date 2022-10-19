@@ -4,6 +4,6 @@ export const NAVBAR_HEIGHT = 75
 
 export const POST_PREVIEW_HEIGHT = 100
 
-export const SIDEBAR_WIDTH = 400
+export const SIDEBAR_WIDTH = 500
 
 export const SELECTION_BORDER_WIDTH = 1
