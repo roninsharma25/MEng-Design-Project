@@ -117,7 +117,7 @@
       }
       ```
 
-#### Remote Queue Entry
+#### Remove Queue Entry
   - URL: `/`
   - Method: `DELETE`
   - Body:
