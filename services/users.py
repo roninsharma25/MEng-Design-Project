@@ -15,8 +15,7 @@ def getAllUsers():
 
 @app.route('/oneUser', methods = ['GET'])
 def getUser():
-    user = getOne('Users', 'Cornell_University', {'email': request.args.get('email')})
-
+    user = getOne('Users', 'Cornell_University', {'Email': request.args.get('email')})
     response = jsonify({'result': user})
     response.headers.add('Access-Control-Allow-Origin', '*')
 

@@ -59,8 +59,8 @@ export default function Main({
             <div>
                 <div style={{...FILL_WIDTH, paddingTop: NAVBAR_HEIGHT, height: window.innerHeight - NAVBAR_HEIGHT}}>
                     <Routes>
-                        <Route path="/students" element={<StudentQueues/>} />
-                        <Route path="/instructor" element={<TAQueues/>} />
+                        <Route path="/students" element={<StudentQueues user={user}/>} />
+                        <Route path="/instructor" element={<TAQueues user={user}/>} />
                         <Route path="/settings" element={<Settings />}/>
                         <Route path="/account" element={<Account />}/>
                         <Route path="/posts" element={<Posts user={user} />}/>

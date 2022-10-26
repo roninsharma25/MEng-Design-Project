@@ -12,7 +12,12 @@ import { FILL_PARENT } from "../utils/styles"
 import TAQueueHeader from "../components/TAQueueHeader"
 import TAQueuePreview from "../components/TAQueuePreview"
 
-export default function TAQueues() {
+export default function TAQueues({
+  user
+}) {
+
+  const [entries, setEntries] = useState([])
+  const [numChanges, setNumChanges] = useState(0)
 
   const container = {
     width: "100%",
@@ -32,9 +37,64 @@ export default function TAQueues() {
       margin:"auto"
   }
 
-  
-  const entries = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-  const queue = entries.map(() => <TAQueuePreview/>)
+
+  useEffect( () => {
+    fetch("http://localhost:5000/queueing/all")
+    .then(resp => resp.json())
+    .then(resp => { 
+      setEntries(resp.result)
+      console.log(resp)
+      console.log(resp)
+    })
+    .catch(err => console.log(err))
+  }, [])
+
+  console.log('QUEUE ENTRIES')
+  console.log(entries)
+
+  const assignFunc = async (email) => {
+    let patchRequest = {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: {
+        'queueEntryDetails': {
+          'email': email
+        },
+        'queueEntryModifications': {
+          'assignedTA': user.email
+        }
+      }
+    }
+
+    patchRequest['body'] = JSON.stringify(patchRequest['body'])
+
+    await fetch('/queueing/updateQueueEntry', patchRequest)
+      .then(setNumChanges(numChanges + 1))
+      .catch(err => console.log(err))
+  }
+
+
+  const removeFunc = async (email) => {
+    let deleteRequest = {
+      method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+      body: {
+          'email': email,
+          'class': 1110 // HARDCODED FOR NOW
+      }
+    }
+
+    deleteRequest['body'] = JSON.stringify(deleteRequest['body'])
+
+    await fetch('/queueing/deleteQueueEntry', deleteRequest)
+      .then(setNumChanges(numChanges + 1))
+      .catch(err => console.log(err))
+  }
+
+  const queue = entries.map((e) => <TAQueuePreview name={e.email} questionTitle={e.questionTitle} 
+                                        assignedTA={e.assignedTA}
+                                        assignToMe={assignFunc} removeFromQueue={removeFunc}/>) 
+
 
   return (
     <div style={container}>

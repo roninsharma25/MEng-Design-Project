@@ -30,9 +30,37 @@ def getAllQueueEntries():
 
     return response
 
+@app.route('/one', methods = ['GET'])
+def getOneQueueEntry():
+    criteria = request.args.get('criteria')
+    value = request.args.get('value')
+    
+    result = getOne('Queues', 'Cornell_University', {criteria: value})
+
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
+@app.route('/inQueue', methods = ['GET'])
+def checkIfInQueue(criteria = None, value = None):
+    criteria = criteria if criteria is not None else request.args.get('criteria')
+    value = value if value is not None else request.args.get('value')
+    
+    try:
+        result = getOne('Queues', 'Cornell_University', {criteria: value})
+        result = True
+    except:
+        result = False
+
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
 @app.route('/', methods = ['POST'])
-def createQueueEntry():
-    postRequest = request.json
+def createQueueEntry(args = None):
+    postRequest = args if args is not None else request.json
     postRequest['timeUpdated'] = str(datetime.now())
 
     # Get current queue entries in the same class
@@ -49,14 +77,16 @@ def createQueueEntry():
     return {'result': result}
 
 @app.route('/updateQueueEntry', methods = ['PATCH'])
-def updateQueueEntry():
-    result = patch('Queues', 'Cornell_University', request.json['queueEntryDetails'], request.json['queueEntryModifications'])
+def updateQueueEntry(details = None, modifications = None):
+    details = details if details is not None else request.json['queueEntryDetails']
+    modifications = modifications if modifications is not None else request.json['queueEntryModifications']
+    result = patch('Queues', 'Cornell_University', details, modifications)
 
     return {'result': result}
 
 @app.route('/', methods = ['DELETE'])
-def removeQueueEntry():
-    deleteRequest = request.json
+def removeQueueEntry(deleteRequest = None):
+    deleteRequest = deleteRequest if deleteRequest is not None else request.json
     
     # Get the queue position of this entry
     queuePosition = getOne('Queues', 'Cornell_University', deleteRequest)['queuePosition']

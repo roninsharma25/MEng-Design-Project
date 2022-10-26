@@ -2,6 +2,7 @@ from flask import *
 from constants import *
 from datetime import datetime
 from database_utils import *
+from queueing import *
 
 import requests
 import json
@@ -22,10 +23,58 @@ def testQueuing():
     
     return response.text
 
+@app.route('/users/type')
+def getUserType():
+    userEmail = request.args.get('email')
+    response = json.loads(requests.get(f'http://127.0.0.1:{usersPort}/oneUser?email={userEmail}').text)
+    response = jsonify({'result': response['result']['Type']})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
 @app.route('/queueing/all')
 def getAllQueueEntries():
     response = jsonify(json.loads(requests.get(f'http://127.0.0.1:{queueingPort}/all').text))
     response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
+@app.route('/queueing/one', methods = ['GET'])
+def getOneQueueEntry():
+    criteria = request.args.get('criteria')
+    value = request.args.get('value')
+
+    response = jsonify(json.loads(requests.get(f'http://127.0.0.1:{queueingPort}/one?criteria={criteria}&value={value}').text))
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
+@app.route('/queueing/checkInQueue', methods = ['GET'])
+def checkIfInQueue():
+    criteria = request.args.get('criteria')
+    value = request.args.get('value')
+
+    response = jsonify(json.loads(requests.get(f'http://127.0.0.1:{queueingPort}/inQueue?criteria={criteria}&value={value}').text))
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
+@app.route('/queueing/addQueueEntry', methods = ['POST'])
+def addQueueEntry():
+    response = jsonify(createQueueEntry(request.json))
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
+@app.route('/queueing/updateQueueEntry', methods = ['PATCH'])
+def updateQueueEntryPost():
+    response = updateQueueEntry(request.json['queueEntryDetails'], request.json['queueEntryModifications'])
+
+    return response
+
+@app.route('/queueing/deleteQueueEntry', methods = ['DELETE'])
+def deleteQueueEntryPost():
+    response = removeQueueEntry(request.json)
 
     return response
 

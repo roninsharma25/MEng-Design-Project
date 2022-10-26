@@ -4,7 +4,11 @@ import { POST_PREVIEW_HEIGHT, SELECTION_BORDER_WIDTH, SIDEBAR_WIDTH } from "../u
 import { FILL_GRADIENT } from "../utils/styles";
 
 export default function TAQueuePreview({
-    name
+    name,
+    questionTitle,
+    assignedTA,
+    assignToMe,
+    removeFromQueue
 }) {
 
     // STYLES ******************************************************************
@@ -39,10 +43,11 @@ export default function TAQueuePreview({
         <div style={unselectedStyle}>
             <div style={contentStyle}>
                 <h3 style={{padding: 10, margin:0}}>{name}</h3>
-                <p style={{padding: 10, margin:0}}>Question Description goes here</p>
-                <Button variant="contained" style={{marginLeft: 10}}>Assign to me</Button>
+                <p style={{padding: 10, margin:0}}>{questionTitle}</p>
+                { assignedTA === '' && <Button variant="contained" onClick={() => assignToMe(name)} style={{marginLeft: 10}}>Assign to me</Button> }
                 <Button variant="text" style={{marginLeft: 10}}>Mark as Inactive</Button>
                 <Button variant="text" style={{marginLeft: 10}}>Move to My Queue</Button>
+                <Button variant="contained" onClick={() => removeFromQueue(name)} style={{marginLeft: 10}}>Remove from Queue</Button>
             </div>
         </div>
     )

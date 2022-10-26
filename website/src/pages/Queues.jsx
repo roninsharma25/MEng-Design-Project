@@ -18,6 +18,7 @@ export default function Queues({
 }) {
     const [queueEntries, setQueueEntries] = useState("No one is in the queue");
     const [queueChanges, setQueueChanges] = useState(0);
+    const [userType, setUserType] = useState("");
 
     const navigate = useNavigate();
     const goToTAQueues = () => navigate("/instructor")
@@ -29,18 +30,28 @@ export default function Queues({
         headers: {'Content-Type': 'application/json'}
     }
 
-    useEffect( () => {
-        fetch("http://localhost:5000/queues/getQueueDatabase?queueID=0")
-            .then(resp => resp.json())
-            .then(resp => setQueueEntries(resp.data.queue))
-            .catch(err => console.log(err))
-    }, [queueChanges])
+    const getUserType = async (email) => {
+        await fetch('http://localhost:5000/users/type?email=' + email)
+          .then(resp => resp.json())
+          .then(resp => {
+            setUserType(resp.result)
+          })
+          .catch(err => console.log(err))
+    };
 
-    // function joinQueue() {
-    //     fetch("http://localhost:5000/queues/addQueueEntryDatabase?queueID=0", postRequest)
-    //         .then(() => setQueueChanges(queueChanges + 1))
-    //         .catch(err => console.log(err))   
-    // }
+    getUserType(user.email);
+    console.log(userType)
+
+    const determineIfInQueue = async (criteria, value) => {
+        await fetch(`http://localhost:5000/queueing/checkInQueue?criteria=${criteria}&value=${value}`)
+          .then(resp => resp.json())
+          .then(resp => {
+            if (userType === "Student" && resp.result) goToStudentQueues()
+          })
+          .catch(err => console.log(err))
+    };
+
+    determineIfInQueue('email', user.email);
 
     function clearQueue() {
         fetch("http://localhost:5000/queues/createQueueDatabase?queueID=0", postRequest)
@@ -86,7 +97,7 @@ export default function Queues({
             <h2>TA'S OH (5PM - 9PM)</h2>
             <h3># Students ahead: 10</h3>
             <h3>Average wait time: 2 hours</h3>
-            <Button variant="contained" onClick={goToTAQueues}>Join Queue!</Button>
+            <Button variant="contained" onClick={goToTAQueues}>View Queue!</Button>
         </CardContent>
     </React.Fragment>
     );
@@ -97,15 +108,19 @@ export default function Queues({
             <h2>TA'S OH (5PM - 9PM)</h2>
             <h3># Students ahead: 10</h3>
             <h3>Average wait time: 2 hours</h3>
-            <Button variant="contained" onClick={goToStudentQueues}>Join Queue!</Button>
+            <Button variant="contained" onClick={joinQueue}>Join Queue!</Button>
         </CardContent>
     </React.Fragment>
     );
 
+    let middleCard = (userType === "Student") ? student : ta;
+    console.log('USER TYPE')
+    console.log(userType)
+
     return (
         <div style={{display: "flex"}}>
             <Card variant="outlined" style={listStyle}>{prof}</Card>
-            <Card variant="outlined" style={listStyle}>{ta}</Card>
+            <Card variant="outlined" style={listStyle}>{middleCard}</Card>
             <Card variant="outlined" style={listStyle}>{student}</Card>
         </div>
         

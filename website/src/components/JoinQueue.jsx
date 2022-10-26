@@ -4,6 +4,11 @@ import {
     Button 
 } from "@mui/material"
 
+// Navigation imports
+import {
+    useNavigate
+} from "react-router-dom"
+
 // This appears when the student clicks the join queue button
 // Stuff to include:
     // Text box for students to enter their question
@@ -13,6 +18,9 @@ export default function JoinQueue({
 }) {
 
     const [questionTitle, setQuestionTitle] = useState("")
+
+    const navigate = useNavigate();
+    const goToStudentQueues = () => navigate("/students")
 
     const textFieldStyle = {
         margin:"1%",
@@ -24,12 +32,18 @@ export default function JoinQueue({
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: {
-              "class": 1110, // hard-coded for now
-              "email": questionTitle
+              'class': 1110, // hard-coded for now
+              'email': user.email,
+              'questionTitle': questionTitle
             }
         }
 
-        //fetch('')
+        newQueueEntry['body'] = JSON.stringify(newQueueEntry['body'])
+
+        fetch('/queueing/addQueueEntry', newQueueEntry)
+            .then(() => goToStudentQueues()) // used to reload the answers
+            .catch(err => console.log(err))
+
     }
 
     return (
@@ -38,7 +52,7 @@ export default function JoinQueue({
             style={textFieldStyle} value={questionTitle} 
             onChange={(e) => setQuestionTitle(e.target.value)} />
 
-            <Button variant="contained" style={{marginLeft: 10, top: "10px"}}>Join Queue</Button>
+            <Button variant="contained" onClick={addQueueEntry} style={{marginLeft: 10, top: "10px"}}>Join Queue!</Button>
         </div>
     )
 }
