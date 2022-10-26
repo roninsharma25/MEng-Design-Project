@@ -84,3 +84,57 @@
       }
       ```
 
+## Queueing
+
+#### Get Queue Entries
+  - URL: `/all`
+  - Method: `GET`
+
+#### Create Queue Entry
+  - URL: `/`
+  - Method: `POST`
+  - Body:
+      ```json
+      {
+        "class": "",
+        "email": ""
+      }
+      ```
+
+#### Update Queue Entry
+  - URL: `/updateQueueEntry`
+  - Method: `PATCH`
+  - Body:
+      ```json
+      {
+        "queueEntryDetails": {
+          "class": "",
+          "email": ""
+        },
+        "queueEntryModifications": {
+          "email": ""
+        }
+      }
+      ```
+
+#### Remove Queue Entry
+  - URL: `/`
+  - Method: `DELETE`
+  - Body:
+      ```json
+      {
+        "class": "",
+        "email": ""
+      }
+      ```
+
+#### Empty Queue
+  - URL: `/emptyQueue`
+  - Method: `DELETE`
+  - Body:
+      ```json
+      {
+        "class": "",
+      }
+      ```
+
