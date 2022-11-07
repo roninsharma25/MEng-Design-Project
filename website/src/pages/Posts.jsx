@@ -77,7 +77,7 @@ export default function Posts({
 
       patchRequest['body'] = JSON.stringify(patchRequest['body'])
 
-      fetch('/addAnswerToPost', patchRequest)
+      fetch('http://localhost:5000/addAnswerToPost', patchRequest)
         .then(() => setNumTextChanges(numTextChanges + 1))
         .then(() => setText(''))
         .catch(err => console.log(err))
@@ -103,7 +103,7 @@ export default function Posts({
 
     patchRequestUpdateAnswer['body'] = JSON.stringify(patchRequestUpdateAnswer['body'])
 
-    fetch('/updateAnswerToPost', patchRequestUpdateAnswer)
+    fetch('http://localhost:5000/updateAnswerToPost', patchRequestUpdateAnswer)
       .then(() => setNumTextChanges(numTextChanges + 1)) // used to reload the answers
       .catch(err => console.log(err))
   }
@@ -132,7 +132,7 @@ export default function Posts({
 
     newPostDetails['body'] = JSON.stringify(newPostDetails['body'])
 
-    fetch('/', newPostDetails)
+    fetch('http://localhost:5000/', newPostDetails)
       .then(() => setNumTextChanges(numTextChanges + 1)) // used to reload the answers
       .catch(err => console.log(err))
   }
@@ -177,7 +177,7 @@ export default function Posts({
 
       patchRequestUpdatePostContent['body'] = JSON.stringify(patchRequestUpdatePostContent['body'])
 
-      fetch('/', patchRequestUpdatePostContent)
+      fetch('http://localhost:5000/', patchRequestUpdatePostContent)
         .then(() => setNumTextChanges(numTextChanges + 1)) // used to reload the answers
         .catch(err => console.log(err))
     }
@@ -200,7 +200,7 @@ export default function Posts({
     
     deletePostRequest['body'] = JSON.stringify(deletePostRequest['body'])
     
-    fetch('/', deletePostRequest)
+    fetch('http://localhost:5000/', deletePostRequest)
       .then(() => setNumTextChanges(numTextChanges + 1)) // used to reload the answers
       .catch(err => console.log(err))
     
