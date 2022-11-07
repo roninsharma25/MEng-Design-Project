@@ -1,4 +1,5 @@
 from flask import *
+from flask_cors import CORS
 from constants import *
 from datetime import datetime
 from database_utils import *
@@ -8,6 +9,7 @@ import requests
 import json
 
 app = Flask(__name__, static_url_path = '')
+CORS(app, support_credentials = True)
 
 @app.route('/')
 def example():
