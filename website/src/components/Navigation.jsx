@@ -97,6 +97,7 @@ export default function Navigation({
           <Button>{userInfo.Name}, {userInfo.Type}</Button>
           <Button variant="contained" onClick={goToPosts}>Posts</Button>
           <Button variant="contained" onClick={goToQueues}>Queues</Button>
+          <Button variant="contained">Stacks</Button>
           <Tooltip title="Account settings">
           <IconButton
             onClick={handleClick}

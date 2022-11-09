@@ -43,27 +43,15 @@ export default function Queues({
     console.log(userType)
 
     const determineIfInQueue = async (criteria, value) => {
-        await fetch(`http://localhost:5000/queueing/checkInQueue?criteria=${criteria}&value=${value}`)
+        await fetch(`http://localhost:5001/inQueue?criteria=${criteria}&value=${value}`)
           .then(resp => resp.json())
           .then(resp => {
-            if (userType === "Student" && resp.result) goToStudentQueues()
+            if (userType !== "Student" && resp.result) goToStudentQueues()
           })
           .catch(err => console.log(err))
     };
 
     determineIfInQueue('email', user.email);
-
-    function clearQueue() {
-        fetch("http://localhost:5000/queues/createQueueDatabase?queueID=0", postRequest)
-            .then(() => setQueueChanges(queueChanges + 1))
-            .catch(err => console.log(err))   
-    }
-
-    function removeQueueEntry() {
-        fetch("http://localhost:5000/queues/removeQueueEntryDatabase?queueID=0?entryID=0", postRequest)
-            .then(() => setQueueChanges(queueChanges + 1))
-            .catch(err => console.log(err))  
-    }
 
     const listStyle = {
         width: 400, 
@@ -82,11 +70,11 @@ export default function Queues({
             <Button variant="contained" onClick={joinQueue}>View Queue!</Button>
             <br></br>
             <br></br>
-            <Button variant="contained" onClick={clearQueue}>Clear Queue!</Button>
+            <Button variant="contained" onClick={joinQueue}>Clear Queue!</Button>
             <p>{queueEntries}</p>
             <br></br>
             <br></br>
-            <Button variant="contained" onClick={removeQueueEntry}>Remove Queue Entry!</Button>
+            <Button variant="contained" onClick={joinQueue}>Remove Queue Entry!</Button>
           </CardContent>
         </React.Fragment>
       );

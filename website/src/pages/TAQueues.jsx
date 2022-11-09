@@ -39,7 +39,7 @@ export default function TAQueues({
 
 
   useEffect( () => {
-    fetch("http://localhost:5000/queueing/all")
+    fetch("http://localhost:5001/all")
     .then(resp => resp.json())
     .then(resp => { 
       setEntries(resp.result)
@@ -79,14 +79,14 @@ export default function TAQueues({
       method: 'DELETE',
       headers: {'Content-Type': 'application/json'},
       body: {
-          'email': email,
+          'email': user.email,
           'class': 1110 // HARDCODED FOR NOW
       }
     }
 
     deleteRequest['body'] = JSON.stringify(deleteRequest['body'])
 
-    await fetch('/queueing/deleteQueueEntry', deleteRequest)
+    await fetch('http://localhost:5001/', deleteRequest)
       .then(setNumChanges(numChanges + 1))
       .catch(err => console.log(err))
   }

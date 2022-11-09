@@ -39,13 +39,6 @@ export default function Posts({
       .catch(err => console.log(err))
   }, [numTextChanges])
 
-
-
-  console.log('USER')
-  console.log(user)
-  console.log(user.email)
-  console.log(user.displayName)
-
   function addAnswer() {
     if (text !== '') {
       let currentPost = posts_[index];
