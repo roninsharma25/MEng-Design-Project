@@ -1,6 +1,7 @@
 import concurrent.futures
 import requests
 import time
+import threading
 import matplotlib.pyplot as plt
 
 BACKEND_URLS = {
@@ -44,25 +45,35 @@ class RequestHandler:
         
         return request_url
     
-    def create_requests(self, num_requests, parameters, json):
-        urls = [self.general_request_endpoint(self.service, self.endpoint) + parameters] * num_requests
-        self.start_timer()
-        with concurrent.futures.ThreadPoolExecutor(max_workers=num_requests) as pool:
-            request_type = REQUEST_TYPE[self.service][self.endpoint]
-            if (request_type == 0):     
-                responses = list(pool.map(self.get_request, urls))
-            elif (request_type == 1):
-                responses = list(pool.map(self.post_request, urls, [ json ] * num_requests))
-        elapsed_time = self.get_time_elapsed()
+    def create_requests(self, interval, num_requests, parameters, json):
+        rps = 1 / interval
+        url = self.general_request_endpoint(self.service, self.endpoint) + parameters
+        request_type = REQUEST_TYPE[self.service][self.endpoint]
+        num_times = [] 
 
-        return elapsed_time
-    
-    def aggregate_request_results(self, num_requests, num_trials, parameters = '', json = ''):
-        self.x_data.append(num_requests)
+        if (request_type == 0):
+            self.threads = [ threading.Thread(target = self.get_request) ] * num_requests
+
+            for thread in self.threads:
+                timer = threading.Timer(interval, thread.run)
+                timer.start()
+                self.start_timer()
+                self.wait_for_thread(thread)
+                num_times.append(self.get_time_elapsed() - interval)
+        
+        return sum(num_times)/len(num_times)
+
+    def wait_for_thread(self, thread):
+        flag = True
+        while (flag):
+            flag = thread.is_alive()
+
+    def aggregate_request_results(self, interval, num_requests, num_trials, parameters = '', json = ''):
+        self.x_data.append(1/interval)
 
         trial_data = []
         for i in range(num_trials):
-            trial_data.append(self.create_requests(num_requests, parameters, json))
+            trial_data.append(self.create_requests(interval, num_requests, parameters, json))
         
         self.y_data.append(sum(trial_data) / num_trials)
 
@@ -87,7 +98,7 @@ class RequestHandler:
 
     
 if __name__ == '__main__':
-    request_handler = RequestHandler('posting', '')
+    request_handler = RequestHandler('posting', 'all')
     new_post = {
         'question': 'test',
         'questionBody': 'test',
@@ -96,8 +107,10 @@ if __name__ == '__main__':
         'class': '1110',
         'name': 'test'
     }
-    for i in range(1, 100, 10):
-        request_handler.aggregate_request_results(i, 5, parameters = '', json = new_post)
+
+    request_handler.aggregate_request_results(0.05, 10, 5)
+    request_handler.aggregate_request_results(0.05, 10, 5)
+
     request_handler.plot_data()
 
 
