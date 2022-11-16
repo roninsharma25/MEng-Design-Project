@@ -29,9 +29,15 @@ class RequestHandler:
         self.endpoint = endpoint
         self.x_data = []
         self.y_data = []
+        self.time_durations = []
     
     def get_request(self, url):
+        start_time = time.time()
+        
         response = requests.get(url)
+
+        time_duration = time.time() - start_time
+        self.time_durations.append(time_duration)
         
         return response
     
@@ -45,35 +51,32 @@ class RequestHandler:
         
         return request_url
     
-    def create_requests(self, interval, num_requests, parameters, json):
-        rps = 1 / interval
+    def create_requests(self, rps, num_requests, parameters, json):
+        interval = 1/rps
         url = self.general_request_endpoint(self.service, self.endpoint) + parameters
         request_type = REQUEST_TYPE[self.service][self.endpoint]
-        num_times = [] 
 
         if (request_type == 0):
-            self.threads = [ threading.Thread(target = self.get_request) ] * num_requests
+            self.threads = []
+            for _ in range(num_requests):
+                self.threads.append(threading.Thread(target = self.get_request, args = (url, )))
 
             for thread in self.threads:
                 timer = threading.Timer(interval, thread.run)
                 timer.start()
-                self.start_timer()
-                self.wait_for_thread(thread)
-                num_times.append(self.get_time_elapsed() - interval)
+ 
+        time.sleep(10) # wait for the threads to finish
+        average_time_duration = sum(self.time_durations) / len(self.time_durations)
         
-        return sum(num_times)/len(num_times)
 
-    def wait_for_thread(self, thread):
-        flag = True
-        while (flag):
-            flag = thread.is_alive()
+        return average_time_duration
 
-    def aggregate_request_results(self, interval, num_requests, num_trials, parameters = '', json = ''):
-        self.x_data.append(1/interval)
+    def aggregate_request_results(self, rps, num_requests, num_trials, parameters = '', json = ''):
+        self.x_data.append(rps)
 
         trial_data = []
         for i in range(num_trials):
-            trial_data.append(self.create_requests(interval, num_requests, parameters, json))
+            trial_data.append(self.create_requests(rps, num_requests, parameters, json))
         
         self.y_data.append(sum(trial_data) / num_trials)
 
@@ -98,7 +101,7 @@ class RequestHandler:
 
     
 if __name__ == '__main__':
-    request_handler = RequestHandler('posting', 'all')
+    request_handler = RequestHandler('queueing', 'all')
     new_post = {
         'question': 'test',
         'questionBody': 'test',
@@ -108,9 +111,7 @@ if __name__ == '__main__':
         'name': 'test'
     }
 
-    request_handler.aggregate_request_results(0.05, 10, 5)
-    request_handler.aggregate_request_results(0.05, 10, 5)
+    for rps in range(1, 2002, 100):
+        request_handler.aggregate_request_results(rps, 10, 3)
 
     request_handler.plot_data()
-
-
