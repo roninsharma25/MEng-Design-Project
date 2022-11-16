@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from "react"
+
 // UI imports
 import { 
     TextField,
@@ -29,10 +31,35 @@ export default function Signup({
     const navigate = useNavigate();
     const goToLogin = () => navigate("/login") 
     const goToWelcome = () => navigate("/")
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
 
     function signUp() {
-        setAuthenticated(true)
-        navigate("/")
+        //setAuthenticated(true)
+        //navigate("/")
+
+        if (password !== confirmPassword) {
+            alert('The passwords do not match!')
+        } else {
+            let postRequest = {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: {
+                    'username': username,
+                    'password': password
+                }
+            }
+
+            postRequest['body'] = JSON.stringify(postRequest['body']);
+            fetch('http://localhost:5002/', postRequest)
+            .catch(err => console.log(err))
+            
+            // Clear the message body
+            setUsername('');
+            setPassword('');
+            setConfirmPassword('');
+        }
     }
 
     const containerStyle = {
@@ -46,13 +73,16 @@ export default function Signup({
     return (
         <div style={containerStyle}>
             <h1>Sign Up</h1>
-            <TextField id="outlined-username-input" label="Username" variant="outlined" />
+            <TextField id="outlined-username-input" label="Username" variant="outlined" 
+            onChange={(e) => setUsername(e.target.value)} value={username}/>
             <br/>
             <br/>
-            <TextField id="outlined-password-input" label="Password" variant="outlined" type ="password"/>
+            <TextField id="outlined-password-input" label="Password" variant="outlined" type ="password" 
+            onChange={(e) => setPassword(e.target.value)} value={password}/>
             <br/>
             <br/>
-            <TextField id="outlined-password-input" label="Confirm Password" variant="outlined" type ="password"/>
+            <TextField id="outlined-password-input" label="Confirm Password" variant="outlined" type ="password" 
+            onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword}/>
             <br/>
             <br/>
             <Button variant="contained" onClick={signUp}>Sign up</Button>

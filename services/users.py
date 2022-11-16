@@ -1,4 +1,5 @@
 from flask import *
+from flask_cors import CORS
 from constants import *
 from datetime import datetime
 from database_utils import *
@@ -6,6 +7,7 @@ from database_utils import *
 import requests
 
 app = Flask(__name__, static_url_path = '')
+CORS(app, support_credentials = True)
 
 @app.route('/all', methods = ['GET'])
 def getAllUsers():
@@ -24,6 +26,11 @@ def getUser():
 @app.route('/', methods = ['POST'])
 def createUser():
     result = post('Users', 'Cornell_University', request.json)
+
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
     return {'result': result}
 
