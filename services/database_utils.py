@@ -11,7 +11,7 @@ def getCollection(database, school):
     """
     Returns the collection of a school within a database.
     """
-    assert database in ["Classes", "Posts", "Queues", "Users"]
+    assert database in ["Classes", "Posts", "Queues", "Users", "GlobalChat"]
 
     return client[database][school]
 
@@ -37,6 +37,20 @@ def getSome(database, school, json):
     """
     collection = getCollection(database, school)
     cursor = collection.find(json)
+    result = []
+    for element in cursor:
+        element["_id"] = str(element["_id"])
+        result.append(element)
+    return result
+
+
+def getRecent(database, school, num_records):
+    """
+    Returns a list of objects in the corresponding collection denoted by the 
+    database and school using the filter criteria in the provided json.
+    """
+    collection = getCollection(database, school)
+    cursor = collection.find().sort("$natural", -1).limit(num_records)
     result = []
     for element in cursor:
         element["_id"] = str(element["_id"])

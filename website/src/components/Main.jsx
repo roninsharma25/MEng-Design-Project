@@ -14,6 +14,7 @@ import Posts from '../pages/Posts'
 import Queues from '../pages/Queues'
 import TAQueues from '../pages/TAQueues'
 import StudentQueues from '../pages/StudentQueues'
+import GlobalChat from '../pages/GlobalChat'
 import { FILL_PARENT, FILL_WIDTH } from "../utils/styles"
 import { NAVBAR_HEIGHT } from "../utils/constants"
 
@@ -66,6 +67,7 @@ export default function Main({
                         <Route path="/posts" element={<Posts user={user} />}/>
                         <Route path="/queues" element={<Queues user={user} />}/>
                         <Route path="/joinQueue" element={<JoinQueue user={user} />}/>
+                        <Route path="/globalChat" element={<GlobalChat user={user} />}/>
                         <Route path="/" element={<Posts />}/>
                     </Routes>
                 </div>
