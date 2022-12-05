@@ -3,6 +3,7 @@ import requests
 import time
 import threading
 import matplotlib.pyplot as plt
+import numpy as np
 
 BACKEND_URLS = {
                     'posting': 'http://localhost:5000/',
@@ -16,6 +17,7 @@ REQUEST_TYPE = {
     'posting': {
         'all': 0,
         'some': 0,
+        'one': 0,
         '': 1, # create new post
     },
     'queueing': {
@@ -23,21 +25,27 @@ REQUEST_TYPE = {
     }
 }
 
+RPS_DICT = {}
+
 class RequestHandler:
-    def __init__(self, service, endpoint):
+    def __init__(self, service, endpoint, next_post):
         self.service = service
         self.endpoint = endpoint
+        self.next_post = next_post
         self.x_data = []
         self.y_data = []
-        self.time_durations = []
     
-    def get_request(self, url):
+    def get_request(self, url, post_num, rps):
         start_time = time.time()
         
-        response = requests.get(url)
+        response = requests.get(f'{url}?criteria=name&value=test_{post_num}')
 
         time_duration = time.time() - start_time
-        self.time_durations.append(time_duration)
+
+        if (rps not in RPS_DICT):
+            RPS_DICT[rps] = [time_duration]
+        else:
+            RPS_DICT[rps].append(time_duration)
         
         return response
     
@@ -59,26 +67,36 @@ class RequestHandler:
         if (request_type == 0):
             self.threads = []
             for _ in range(num_requests):
-                self.threads.append(threading.Thread(target = self.get_request, args = (url, )))
+                self.threads.append(threading.Thread(target = self.get_request, args = (url, self.next_post, rps)))
+                self.next_post += 1
 
-            for thread in self.threads:
-                timer = threading.Timer(interval, thread.run)
+            for iteration, thread in enumerate(self.threads):
+                timer = threading.Timer(interval * iteration, thread.start)
                 timer.start()
- 
-        time.sleep(10) # wait for the threads to finish
-        average_time_duration = sum(self.time_durations) / len(self.time_durations)
         
+        # Wait a bit for the threads to start
+        time.sleep(15)
+    
+        # Wait for the threads to finish
+        for thread in self.threads:
+            thread.join()
 
-        return average_time_duration
+        # Calcualte the tail latency
+        #latency_99_percentile = np.percentile(self.time_durations, 99)
 
-    def aggregate_request_results(self, rps, num_requests, num_trials, parameters = '', json = ''):
-        self.x_data.append(rps)
+        # Reset the time durations
+        #self.time_durations = []
 
-        trial_data = []
-        for i in range(num_trials):
-            trial_data.append(self.create_requests(rps, num_requests, parameters, json))
-        
-        self.y_data.append(sum(trial_data) / num_trials)
+        #print(rps, latency_99_percentile)
+
+        #return latency_99_percentile
+
+    def aggregate_request_results(self, rps, num_requests, parameters = '', json = ''):
+        #result = self.create_requests(rps, num_requests, parameters, json)
+        self.create_requests(rps, num_requests, parameters, json)
+
+        #self.x_data.append(rps)
+        #self.y_data.append(result)
 
     def start_timer(self):
         self.start_time = time.time()
@@ -89,11 +107,19 @@ class RequestHandler:
         return time_elapsed
     
     def plot_data(self):
+        # Format data for plotting
+        for rps in RPS_DICT.keys():
+            self.x_data.append(rps)
+            self.y_data.append(np.percentile(RPS_DICT[rps], 99))
+        
         plt.plot(self.x_data, self.y_data)
         plt.title('RPS vs Latency')
         plt.xlabel('Requests per Second (RPS)')
         plt.ylabel('Latency (seconds)')
         plt.savefig(f'plots/{self.service}_{self.endpoint}.png')
+
+        print('x-data:', self.x_data)
+        print('y-data:', self.y_data)
     
     def clear_data(self):
         self.x_data = []
@@ -101,17 +127,12 @@ class RequestHandler:
 
     
 if __name__ == '__main__':
-    request_handler = RequestHandler('queueing', 'all')
-    new_post = {
-        'question': 'test',
-        'questionBody': 'test',
-        'email': 'test',
-        'role': 'Student',
-        'class': '1110',
-        'name': 'test'
-    }
+    request_handler = RequestHandler('posting', 'one', 5940) # NEED TO CREATE MORE POSTS
 
-    for rps in range(1, 2002, 100):
-        request_handler.aggregate_request_results(rps, 10, 3)
+    for rps in range(1000, 5002, 200):
+        print(rps)
+        request_handler.aggregate_request_results(rps, 10)
 
     request_handler.plot_data()
+
+    print(f'Next post: {request_handler.next_post}')
