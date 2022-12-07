@@ -16,9 +16,14 @@ export default function GlobalChat({
     const [numChanges, setNumChanges] = useState(0);
     const [messageBody, setMessageBody] = useState('');
 
+    const generalStyle = {
+        marginLeft: "2%",
+        position: "absolute",
+        left: "35%"
+    }
+
     const textFieldStyle = {
-        width:"98%", 
-        margin:"1%"
+        width: "300px", 
     }
 
     useEffect( () => {
@@ -38,9 +43,7 @@ export default function GlobalChat({
         messagesTemp.forEach(elm => console.log(elm.message))
         messages = messagesTemp.map( (elm, i) =>
             <React.Fragment>
-                <br />
                 <p>{elm.message}</p>
-                <br />
             </React.Fragment>
         )
         console.log('MESSAGES');
@@ -65,8 +68,26 @@ export default function GlobalChat({
         setMessageBody('');
     }
 
+    const clearMessages = () => {
+        let deleteRequest = {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
+            body: { }
+        }
+
+        deleteRequest['body'] = JSON.stringify(deleteRequest['body']);
+        fetch('http://localhost:5004/clearChat', deleteRequest)
+        .then(() => setNumChanges(numChanges + 1)) // used to reload the messages
+        .catch(err => console.log(err))
+        
+    }
+
+    const pollMessages = () => {
+        setNumChanges(numChanges + 1);
+    }
+
     return (
-        <div>
+        <div style={generalStyle}>
             <h1>Global Chat</h1>
             <br />
             <br />
@@ -77,7 +98,13 @@ export default function GlobalChat({
 
             <TextField id="outlined-search" label="New Message" type="search" multiline rows={5} style={textFieldStyle}
             onChange={(e) => setMessageBody(e.target.value)} value={messageBody}/>
+
+            <br />
+            <br />
+
             <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={sendMessage}>Send Message</Button>
+            <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={pollMessages}>Poll Messages</Button>
+            <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={clearMessages}>Clear Messages</Button>
 
         </div>
     );

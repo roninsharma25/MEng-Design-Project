@@ -236,7 +236,7 @@ export default function Posts({
   }
   
   const sidebar = {
-    width: SIDEBAR_WIDTH,
+    width: SIDEBAR_WIDTH * 1.3,
     maxHeight: "100%",
     overflowY: "scroll",
   }
@@ -249,7 +249,7 @@ export default function Posts({
   }
 
   const listStyle = {
-      width:"98%", 
+      width:"100%", 
       margin:"1%"
   }
 

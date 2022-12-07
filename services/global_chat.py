@@ -44,7 +44,13 @@ def createChatMessage():
 
 @app.route('/clearChat', methods = ['DELETE'])
 def clearChatMessages():
-    pass
+    result = delete('GlobalChat', 'Cornell_University', {}, True)
+
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=globalChatPort)

@@ -89,6 +89,18 @@ def getAllPosts():
 
     return response
 
+@app.route('/one', methods = ['GET'])
+def getOnePost():
+    criteria = request.args.get('criteria')
+    value = request.args.get('value')
+
+    result = getOne('Posts', 'Cornell_University', {criteria: value})
+
+    response = jsonify({'result': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
 @app.route('/some', methods = ['GET'])
 def getSomePosts():
     criteria = request.args.get('criteria')
