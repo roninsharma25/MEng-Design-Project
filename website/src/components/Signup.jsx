@@ -36,9 +36,6 @@ export default function Signup({
     const [confirmPassword, setConfirmPassword] = useState('')
 
     function signUp() {
-        //setAuthenticated(true)
-        //navigate("/")
-
         if (password !== confirmPassword) {
             alert('The passwords do not match!')
         } else {

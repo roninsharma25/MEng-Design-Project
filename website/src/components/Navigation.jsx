@@ -81,7 +81,7 @@ export default function Navigation({
     <div style={style}>
       <div style={leftSide}>
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Age</InputLabel>
+          <InputLabel id="demo-simple-select-label">Class</InputLabel>
           <Select
             ref={selector}
             labelId="demo-simple-select-label"

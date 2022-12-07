@@ -23,7 +23,7 @@ export default function Main({
     user
 }) {
     
-    const courses = ["CS 1110", "CS 2110", "CS 3110"]
+    const courses = ["JAM 1110", "JAM 1112", "JAM 2110"]
     const [course, setCourse] = useState(0);
     const [userInfo, setUserInfo] = useState('');
     const [dimensions, setDimensions] = useState({ 
