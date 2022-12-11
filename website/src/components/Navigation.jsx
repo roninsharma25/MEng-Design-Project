@@ -76,6 +76,10 @@ export default function Navigation({
     navigate("/globalChat")
   }
 
+  function goToGrades() {
+    navigate("/grades")
+  }
+
 
   return (
     <div style={style}>
@@ -103,6 +107,7 @@ export default function Navigation({
           <Button variant="contained" onClick={goToQueues}>Queues</Button>
           <Button variant="contained">Stacks</Button>
           <Button variant="contained" onClick={goToGlobalChat}>Global Chat</Button>
+          <Button variant="contained" onClick={goToGrades}>Grades</Button>
           <Tooltip title="Account settings">
           <IconButton
             onClick={handleClick}

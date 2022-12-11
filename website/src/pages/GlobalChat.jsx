@@ -5,7 +5,8 @@ import {
     Typography,
     CardActions,
     Button,
-    Card
+    Card,
+    Avatar,
 } from "@mui/material"
 
 
@@ -23,7 +24,7 @@ export default function GlobalChat({
     }
 
     const textFieldStyle = {
-        width: "300px", 
+        width: "520px", 
     }
 
     useEffect( () => {
@@ -43,7 +44,18 @@ export default function GlobalChat({
         messagesTemp.forEach(elm => console.log(elm.message))
         messages = messagesTemp.map( (elm, i) =>
             <React.Fragment>
-                <p>{elm.message}</p>
+                <div style={{display: "flex"}}>
+                    <div style={{width: "33.3%"}}>
+                        {elm.message}
+                    </div>
+                    <div style={{fontSize: "10px", marginTop: "3px", width: "33.3%"}}>
+                        ({elm.email})
+                    </div>
+                    <div style={{marginTop: "-5px", width: "33.3%"}}>
+                        <Avatar sx={{ width: 30, height: 30 }}> {elm.email.charAt(0)} </Avatar>
+                    </div>
+                </div>
+                <br />
             </React.Fragment>
         )
         console.log('MESSAGES');
@@ -55,7 +67,8 @@ export default function GlobalChat({
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: {
-              'message': messageBody
+                'email': user.email,
+                'message': messageBody
             }
         }
 
@@ -86,9 +99,14 @@ export default function GlobalChat({
         setNumChanges(numChanges + 1);
     }
 
+    console.log('EMAIL ---');
+    console.log(user.email)
+    console.log(typeof(user.email))
+    console.log(user.email.charAt(0))
     return (
         <div style={generalStyle}>
             <h1>Global Chat</h1>
+            <hr />
             <br />
             <br />
 

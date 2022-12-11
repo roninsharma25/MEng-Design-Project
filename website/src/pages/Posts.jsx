@@ -359,6 +359,8 @@ export default function Posts({
     )
 
     commentState = [];
+    console.log('POSTS 2');
+    console.log(posts);
     posts.forEach((elm, i) => {
       commentState.push(Array(posts_[i].answers.length).fill('Edit Comment'));
       answers.push(posts_[i].answers.map((elm, j) => 
@@ -392,6 +394,8 @@ export default function Posts({
   }
 
   if (!creatingPost) {
+    console.log('POSTS:');
+    console.log(posts_);
     return (
         <div style={{display: "flex"}}>
             <div id="sidebar" style={sidebar}>

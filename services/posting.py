@@ -4,12 +4,15 @@ from constants import *
 from datetime import datetime
 from database_utils import *
 from queueing import *
+from pymemcache.client import base
 
 import requests
 import json
 
 app = Flask(__name__, static_url_path = '')
 CORS(app, support_credentials = True)
+
+cache_client = base.Client(('localhost', memcachedPort))
 
 @app.route('/')
 def example():
@@ -18,12 +21,6 @@ def example():
 @app.route('/test')
 def testGet():
     return 'Posting!'
-
-@app.route('/queueing')
-def testQueuing():
-    response = requests.get(f'http://127.0.0.1:{queueingPort}/test')
-    
-    return response.text
 
 @app.route('/users/type')
 def getUserType():
@@ -34,55 +31,14 @@ def getUserType():
 
     return response
 
-@app.route('/queueing/all')
-def getAllQueueEntries():
-    response = jsonify(json.loads(requests.get(f'http://127.0.0.1:{queueingPort}/all').text))
-    response.headers.add('Access-Control-Allow-Origin', '*')
-
-    return response
-
-@app.route('/queueing/one', methods = ['GET'])
-def getOneQueueEntry():
-    criteria = request.args.get('criteria')
-    value = request.args.get('value')
-
-    response = jsonify(json.loads(requests.get(f'http://127.0.0.1:{queueingPort}/one?criteria={criteria}&value={value}').text))
-    response.headers.add('Access-Control-Allow-Origin', '*')
-
-    return response
-
-@app.route('/queueing/checkInQueue', methods = ['GET'])
-def checkIfInQueue():
-    criteria = request.args.get('criteria')
-    value = request.args.get('value')
-
-    response = jsonify(json.loads(requests.get(f'http://127.0.0.1:{queueingPort}/inQueue?criteria={criteria}&value={value}').text))
-    response.headers.add('Access-Control-Allow-Origin', '*')
-
-    return response
-
-@app.route('/queueing/addQueueEntry', methods = ['POST'])
-def addQueueEntry():
-    response = jsonify(createQueueEntry(request.json))
-    response.headers.add('Access-Control-Allow-Origin', '*')
-
-    return response
-
-@app.route('/queueing/updateQueueEntry', methods = ['PATCH'])
-def updateQueueEntryPost():
-    response = updateQueueEntry(request.json['queueEntryDetails'], request.json['queueEntryModifications'])
-
-    return response
-
-@app.route('/queueing/deleteQueueEntry', methods = ['DELETE'])
-def deleteQueueEntryPost():
-    response = removeQueueEntry(request.json)
-
-    return response
-
 @app.route('/all', methods = ['GET'])
 def getAllPosts():
-    result = getAll('Posts', 'Cornell_University')
+    result = cache_client.get('all_posts')
+    if (result is None):
+        result = getAll('Posts', 'Cornell_University')
+        cache_client.set('all_posts', json.dumps(result))
+    else:
+        result = json.loads(result.decode('utf-8'))
 
     response = jsonify({'result': result})
     response.headers.add('Access-Control-Allow-Origin', '*')

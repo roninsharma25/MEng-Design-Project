@@ -11,7 +11,7 @@ def getCollection(database, school):
     """
     Returns the collection of a school within a database.
     """
-    assert database in ["Classes", "Posts", "Queues", "Users", "GlobalChat"]
+    assert database in ["Classes", "Posts", "Queues", "Users", "GlobalChat", "Grades"]
 
     return client[database][school]
 
