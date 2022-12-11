@@ -29,23 +29,38 @@ RPS_DICT = {}
 
 class RequestHandler:
     def __init__(self, service, endpoint, next_post):
-        self.service = service
-        self.endpoint = endpoint
-        self.next_post = next_post
-        self.x_data = []
-        self.y_data = []
+        if (endpoint == 'all'):
+            self.service = service
+            self.service1 = 'posting'
+            self.service2 = 'queueing'
+            self.endpoint = 'all'
+            RPS_DICT[self.service1] = {}
+            RPS_DICT[self.service2] = {}
+        else:
+            self.service = service
+            self.endpoint = endpoint
+            self.next_post = next_post
+            self.x_data = []
+            self.y_data = []
     
-    def get_request(self, url, post_num, rps):
+    def get_request(self, url, post_num, rps, service = None):
         start_time = time.time()
         
-        response = requests.get(f'{url}?criteria=name&value=test_{post_num}')
+        #response = requests.get(f'{url}?criteria=name&value=test_{post_num}')
+        response = requests.get(f'{url}?')
 
         time_duration = time.time() - start_time
 
-        if (rps not in RPS_DICT):
-            RPS_DICT[rps] = [time_duration]
+        if (service):
+            if (rps not in RPS_DICT[service]):
+                RPS_DICT[service][rps] = [time_duration]
+            else:
+                RPS_DICT[service][rps].append(time_duration)
         else:
-            RPS_DICT[rps].append(time_duration)
+            if (rps not in RPS_DICT):
+                RPS_DICT[rps] = [time_duration]
+            else:
+                RPS_DICT[rps].append(time_duration)
         
         return response
     
@@ -61,11 +76,22 @@ class RequestHandler:
     
     def create_requests(self, rps, num_requests, parameters, json):
         interval = 1/rps
-        url = self.general_request_endpoint(self.service, self.endpoint) + parameters
         request_type = REQUEST_TYPE[self.service][self.endpoint]
 
-        if (request_type == 0):
-            self.threads = []
+        self.threads = []
+        if (self.endpoint == 'all'):
+            url1 = self.general_request_endpoint(self.service1, self.endpoint) + parameters
+            url2 = self.general_request_endpoint(self.service2, self.endpoint) + parameters
+            for _ in range(num_requests):
+                self.threads.append(threading.Thread(target = self.get_request, args = (url1, 0, rps, self.service1)))
+                self.threads.append(threading.Thread(target = self.get_request, args = (url2, 0, rps, self.service2)))
+
+            for iteration, thread in enumerate(self.threads):
+                timer = threading.Timer(interval * iteration / 2, thread.start) # divide by 2 to account for interleaving requests
+                timer.start()
+
+        elif (request_type == 0):
+            url = self.general_request_endpoint(self.service, self.endpoint) + parameters
             for _ in range(num_requests):
                 self.threads.append(threading.Thread(target = self.get_request, args = (url, self.next_post, rps)))
                 self.next_post += 1
@@ -92,7 +118,6 @@ class RequestHandler:
         #return latency_99_percentile
 
     def aggregate_request_results(self, rps, num_requests, parameters = '', json = ''):
-        #result = self.create_requests(rps, num_requests, parameters, json)
         self.create_requests(rps, num_requests, parameters, json)
 
         #self.x_data.append(rps)
@@ -127,12 +152,14 @@ class RequestHandler:
 
     
 if __name__ == '__main__':
-    request_handler = RequestHandler('posting', 'one', 5940) # NEED TO CREATE MORE POSTS
+    request_handler = RequestHandler('posting', 'all', 5940)
 
     for rps in range(1000, 5002, 200):
         print(rps)
         request_handler.aggregate_request_results(rps, 10)
 
-    request_handler.plot_data()
+    print(RPS_DICT)
 
-    print(f'Next post: {request_handler.next_post}')
+    #request_handler.plot_data()
+
+    #print(f'Next post: {request_handler.next_post}')

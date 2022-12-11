@@ -14,6 +14,8 @@ import Posts from '../pages/Posts'
 import Queues from '../pages/Queues'
 import TAQueues from '../pages/TAQueues'
 import StudentQueues from '../pages/StudentQueues'
+import Stacks from '../pages/Stacks'
+import TAStacks from '../pages/TAStacks'
 import GlobalChat from '../pages/GlobalChat'
 import Grades from '../pages/Grades'
 import { FILL_PARENT, FILL_WIDTH } from "../utils/styles"
@@ -63,11 +65,13 @@ export default function Main({
                     <Routes>
                         <Route path="/students" element={<StudentQueues user={user}/>} />
                         <Route path="/instructor" element={<TAQueues user={user}/>} />
+                        <Route path="/instructor_stacks" element={<TAStacks user={user}/>} />
                         <Route path="/settings" element={<Settings />}/>
                         <Route path="/account" element={<Account />}/>
                         <Route path="/posts" element={<Posts user={user} />}/>
                         <Route path="/queues" element={<Queues user={user} />}/>
                         <Route path="/joinQueue" element={<JoinQueue user={user} />}/>
+                        <Route path="/stacks" element={<Stacks user={user} />}/>
                         <Route path="/globalChat" element={<GlobalChat user={user} />}/>
                         <Route path="/grades" element={<Grades user={user} />}/>
                         <Route path="/" element={<Posts />}/>

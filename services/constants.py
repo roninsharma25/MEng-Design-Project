@@ -5,4 +5,5 @@ usersPort = 5002
 classesPort = 5003
 globalChatPort = 5004
 gradingPort = 5005
+stackPort = 5006
 memcachedPort = 11211

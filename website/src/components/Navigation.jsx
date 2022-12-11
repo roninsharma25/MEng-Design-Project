@@ -72,6 +72,10 @@ export default function Navigation({
     navigate("/queues")
   }
 
+  function goToStacks() {
+    navigate("/stacks")
+  }
+
   function goToGlobalChat() {
     navigate("/globalChat")
   }
@@ -105,7 +109,7 @@ export default function Navigation({
           <Button>{userInfo.Name}, {userInfo.Type}</Button>
           <Button variant="contained" onClick={goToPosts}>Posts</Button>
           <Button variant="contained" onClick={goToQueues}>Queues</Button>
-          <Button variant="contained">Stacks</Button>
+          <Button variant="contained" onClick={goToStacks}>Stacks</Button>
           <Button variant="contained" onClick={goToGlobalChat}>Global Chat</Button>
           <Button variant="contained" onClick={goToGrades}>Grades</Button>
           <Tooltip title="Account settings">

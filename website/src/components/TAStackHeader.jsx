@@ -3,7 +3,7 @@ import { Button } from "@mui/material"
 import { POST_PREVIEW_HEIGHT, SELECTION_BORDER_WIDTH, SIDEBAR_WIDTH } from "../utils/constants"
 import { CENTER_CONTENT, FILL_GRADIENT } from "../utils/styles";
 
-export default function TAQueueHeader() {
+export default function TAStackHeader() {
 
     // STYLES ******************************************************************
 
@@ -48,9 +48,9 @@ export default function TAQueueHeader() {
                 <Button variant="contained">Assign me to the next student</Button>
                 <br/>
                 <br/>
-                <Button variant="text" style={{marginLeft:10, marginRight:10}}>Active Queue</Button>
-                <Button variant="text" style={{marginLeft:10, marginRight:10}}>Inactive Queue</Button>
-                <Button variant="text" style={{marginLeft:10, marginRight:10}}>My Queue</Button>
+                <Button variant="text" style={{marginLeft:10, marginRight:10}}>Active Stack</Button>
+                <Button variant="text" style={{marginLeft:10, marginRight:10}}>Inactive Stack</Button>
+                <Button variant="text" style={{marginLeft:10, marginRight:10}}>My Stack</Button>
                 
             </div>
         </div>
