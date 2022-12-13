@@ -9,6 +9,15 @@ import {
     Avatar,
 } from "@mui/material"
 
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
+
 
 export default function Grades({
     user
@@ -20,7 +29,8 @@ export default function Grades({
     const generalStyle = {
         marginLeft: "2%",
         position: "absolute",
-        left: "35%"
+        left: "25%",
+        top: "20%",
     }
 
     const textFieldStyle = {
@@ -84,71 +94,66 @@ export default function Grades({
             </React.Fragment>
         )
     }
-    
-    // let messagesTemp;
-    // let messages;
-    // if (chatMessages.length) {
-    //     messagesTemp = [...chatMessages];
-    //     messagesTemp.forEach(elm => console.log(elm.message))
-    //     messages = messagesTemp.map( (elm, i) =>
-    //         <React.Fragment>
-    //             <div style={{display: "flex"}}>
-    //                 <div style={{width: "33.3%"}}>
-    //                     {elm.message}
-    //                 </div>
-    //                 <div style={{fontSize: "10px", marginTop: "3px", width: "33.3%"}}>
-    //                     ({elm.email})
-    //                 </div>
-    //                 <div style={{marginTop: "-5px", width: "33.3%"}}>
-    //                     <Avatar sx={{ width: 30, height: 30 }}> {elm.email.charAt(0)} </Avatar>
-    //                 </div>
-    //             </div>
-    //             <br />
-    //         </React.Fragment>
-    //     )
-    //     console.log('MESSAGES');
-    //     console.log(messages);
-    // }
 
-    // const sendMessage = () => {
-    //     let postRequest = {
-    //         method: 'POST',
-    //         headers: {'Content-Type': 'application/json'},
-    //         body: {
-    //             'email': user.email,
-    //             'message': messageBody
-    //         }
-    //     }
-
-    //     postRequest['body'] = JSON.stringify(postRequest['body']);
-    //     fetch('http://localhost:5004/', postRequest)
-    //     .then(() => setNumChanges(numChanges + 1)) // used to reload the messages
-    //     .catch(err => console.log(err))
-        
-    //     // Clear the message body
-    //     setMessageBody('');
-    // }
+    const data = [ 
+        {
+            "Assignment": "A1",
+            "Grade": "A+"
+        },
+        {
+            "Assignment": "A2",
+            "Grade": "A"
+        }
+    ]
 
     if (showGrades) {
         return (
-            <div style={generalStyle}>
-                <h1>Grades</h1>
-                <hr />
-
-                <div>
-                    { grades_display }
+            <div>
+                <div style={{position: "absolute", left: "45%"}}>
+                    <h1>Grades</h1>
                 </div>
 
-                <br />
+                <div style={generalStyle}>
+                    <hr />
 
-                <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={hideGrades}>Hide Grades</Button>
+                    <div>
+                        { grades_display }
+                    </div>
 
+                    <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                        <TableRow>
+                            <TableCell align="center">Assignment</TableCell>
+                            <TableCell align="center">Grade</TableCell>
+                        </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {data.map((row) => (
+                            <TableRow
+                            key={row.Assignment}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                            <TableCell align="center">{row.Assignment}</TableCell>
+                            <TableCell align="center">{row.Grade}</TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                    </Table>
+                    </TableContainer>
+
+                    <br />
+                    <div style={{marginLeft: "225px"}}>
+                    <Button variant="contained" style={{marginLeft:10, marginRight:10}} onClick={hideGrades}>Hide Grades</Button>
+                    </div>
+                </div>
             </div>
         );
     } else {
         return (
             <div style={generalStyle}>
-                <h1>Grades</h1>
+            <h1>Grades</h1>
+                
                 <hr />
                 <h3>You have chosen to hide your grades!</h3>
 

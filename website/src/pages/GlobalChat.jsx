@@ -7,7 +7,8 @@ import {
     Button,
     Card,
     Avatar,
-} from "@mui/material"
+    Chip,
+} from "@mui/material";
 
 
 export default function GlobalChat({
@@ -42,17 +43,15 @@ export default function GlobalChat({
     if (chatMessages.length) {
         messagesTemp = [...chatMessages];
         messagesTemp.forEach(elm => console.log(elm.message))
+
         messages = messagesTemp.map( (elm, i) =>
             <React.Fragment>
                 <div style={{display: "flex"}}>
                     <div style={{width: "33.3%"}}>
-                        {elm.message}
+                        <Chip avatar={<Avatar>{elm.email.charAt(0)}</Avatar>}label={elm.message} />
                     </div>
-                    <div style={{fontSize: "10px", marginTop: "3px", width: "33.3%"}}>
+                    <div style={{fontSize: "10px", marginTop: "10px", width: "33.3%", marginLeft: "200px"}}>
                         ({elm.email})
-                    </div>
-                    <div style={{marginTop: "-5px", width: "33.3%"}}>
-                        <Avatar sx={{ width: 30, height: 30 }}> {elm.email.charAt(0)} </Avatar>
                     </div>
                 </div>
                 <br />
@@ -99,10 +98,6 @@ export default function GlobalChat({
         setNumChanges(numChanges + 1);
     }
 
-    console.log('EMAIL ---');
-    console.log(user.email)
-    console.log(typeof(user.email))
-    console.log(user.email.charAt(0))
     return (
         <div style={generalStyle}>
             <h1>Global Chat</h1>
