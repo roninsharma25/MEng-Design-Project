@@ -58,17 +58,27 @@ export default function Grades({
     const formatGrades = (data) => {
         let grades_formatted = [];
         data.forEach( (elm, i) => {
-            let key = Object.keys(elm)[0];
-            let values = Object.values(elm)[0];
-            let keys2 = Object.keys(values);
-            let values2 = Object.values(values);
+            let temp = Object.values(elm)[0];
+            // let key = Object.keys(elm)[0];
+            // let values = Object.values(elm)[0];
+            // let keys2 = Object.keys(values);
+            // let values2 = Object.values(values);
 
-            let temp = [ key ];
-            keys2.forEach( (elm, i) => {
-                temp.push(elm);
-                temp.push(values2[i])
+            // let temp = [ key ];
+            // keys2.forEach( (elm, i) => {
+            //     temp.push(elm);
+            //     temp.push(values2[i])
+            // })
+            console.log("TEMP")
+            console.log(temp)
+            Object.keys(temp).forEach( (elm2, j) => {
+                let temp_obj = {
+                    "Assignment": elm2,
+                    "Grade": temp[elm2]
+                };
+                grades_formatted.push(temp_obj);
             })
-            grades_formatted.push(temp);
+            
         })
 
         setGrades(grades_formatted);
@@ -116,10 +126,6 @@ export default function Grades({
                 <div style={generalStyle}>
                     <hr />
 
-                    <div>
-                        { grades_display }
-                    </div>
-
                     <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
@@ -129,7 +135,7 @@ export default function Grades({
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {data.map((row) => (
+                        {grades.map((row) => (
                             <TableRow
                             key={row.Assignment}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

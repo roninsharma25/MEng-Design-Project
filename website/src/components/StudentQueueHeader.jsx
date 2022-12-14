@@ -40,7 +40,7 @@ export default function StudentQueueHeader({
     return (
         <div style={selectedStyle}>
             <div style={contentStyle}>
-                <h1 style={{padding: 10, margin:0}}>Professor OH</h1>
+                <h1 style={{padding: 10, margin:0}}>TA OH</h1>
                 <h2 style={{padding: 10, margin:0}}>4:00PM - 6:00PM</h2>
                 <h3 style={{padding: 10, margin:0}}># Students ahead: 20</h3>
                 <h3 style={{padding: 10, margin:0}}>4:00PM - 6:00PM</h3>
